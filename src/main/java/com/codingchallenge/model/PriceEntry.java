@@ -15,6 +15,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 public class PriceEntry {
+    @Id
+    private String id;
     private String productId;
     private double price;
     private String currency;
