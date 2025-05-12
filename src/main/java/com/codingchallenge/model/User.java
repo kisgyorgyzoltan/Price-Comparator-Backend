@@ -1,0 +1,20 @@
+package com.codingchallenge.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Document(collection = "users")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class User {
+    private String name;
+    private String password;
+    private List<Product> shoppingCart = List.of();
+    private LocalDateTime  lastCartUpdate;
+}
