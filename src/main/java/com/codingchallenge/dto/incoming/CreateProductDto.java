@@ -7,7 +7,6 @@ import lombok.Data;
 @Data
 public class CreateProductDto {
     @Pattern(regexp = "^[A-Z0-9]{1,20}$", message = "Product ID must be alphanumeric and between 1 and 20 characters.")
-
     private String productId;
 
     @Pattern(regexp = "^[A-Za-z0-9\\s]{1,100}$", message = "Product name must be alphanumeric and between 1 and 100 characters.")

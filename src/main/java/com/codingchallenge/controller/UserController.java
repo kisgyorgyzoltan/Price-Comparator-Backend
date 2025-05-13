@@ -14,8 +14,10 @@ import com.codingchallenge.service.ProductService;
 import com.codingchallenge.service.ShoppingListService;
 import com.codingchallenge.service.UserService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +25,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping("/api/users")
+@Validated
 public class UserController {
     private final UserService userService;
 
@@ -114,7 +117,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable String id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for id") String id) {
         try {
             User user = userService.getUserById(id);
             userService.deleteUser(user);
@@ -128,7 +131,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}/cart")
-    public ResponseEntity<Void> clearCart(@PathVariable String id) {
+    public ResponseEntity<Void> clearCart(@PathVariable @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for id") String id) {
         try {
             User user = userService.getUserById(id);
             userService.clearCart(user);
@@ -142,7 +145,7 @@ public class UserController {
     }
 
     @PostMapping("/{id}/cart")
-    public ResponseEntity<List<GetProductDto>> addToCart(@PathVariable String id, @RequestBody String productId) {
+    public ResponseEntity<List<GetProductDto>> addToCart(@PathVariable @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for id") String id, @RequestBody  @Pattern(regexp = "^[A-Z0-9]{1,20}$", message = "Product ID must be alphanumeric and between 1 and 20 characters.") String productId) {
         try {
             User user = userService.getUserById(id);
             Product product = productService.getProductById(productId);
@@ -156,7 +159,7 @@ public class UserController {
     }
 
     @PostMapping("/{userId}/shopping-list")
-    public ResponseEntity<GetShoppingListDto> generateShoppingList(@PathVariable String userId) {
+    public ResponseEntity<GetShoppingListDto> generateShoppingList(@PathVariable @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for id") String userId) {
         try {
             User user = userService.getUserById(userId);
             List<Product> cart = user.getShoppingCart();

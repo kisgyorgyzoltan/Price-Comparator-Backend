@@ -8,13 +8,16 @@ import com.codingchallenge.service.DiscountEntryService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.constraints.Pattern;
 
 import java.util.List;
 
 @RestController
 @Slf4j
-@RequestMapping("/api/discounts")
+@RequestMapping("/api/discount-entries")
+@Validated
 public class DiscountEntryController {
 
     private final DiscountEntryService discountEntryService;
@@ -27,8 +30,11 @@ public class DiscountEntryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<GetDiscountEntryDto>> getAllDiscountEntries() {
+    public ResponseEntity<List<GetDiscountEntryDto>> getAllDiscountEntries(@RequestParam(value = "newest", required = false) boolean newest) {
         try {
+            if (newest) {
+                return ResponseEntity.ok(discountEntryMapper.toGetDiscountEntryDtos(discountEntryService.getNewestDiscountEntries()));
+            }
             return ResponseEntity.ok(discountEntryMapper.toGetDiscountEntryDtos(discountEntryService.getAllDiscountEntries()));
         } catch (IllegalArgumentException e) {
             log.error("Failed to fetch discounts: {}", e.getMessage());
@@ -38,7 +44,7 @@ public class DiscountEntryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GetDiscountEntryDto> getDiscountEntryById(@PathVariable String id) {
+    public ResponseEntity<GetDiscountEntryDto> getDiscountEntryById(@PathVariable(value = "id") @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for id") String id) {
         try {
             DiscountEntry discountEntry = discountEntryService.getDiscountEntryById(id);
 
@@ -65,7 +71,7 @@ public class DiscountEntryController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<GetDiscountEntryDto> updateDiscountEntry(@PathVariable String id, @RequestBody @Valid CreateDiscountEntryDto discountEntryDto) {
+    public ResponseEntity<GetDiscountEntryDto> updateDiscountEntry(@PathVariable @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for id") String id, @RequestBody @Valid CreateDiscountEntryDto discountEntryDto) {
         try {
             DiscountEntry existingDiscountEntry = discountEntryService.getDiscountEntryById(id);
             DiscountEntry incomingDiscountEntry = discountEntryMapper.toDiscountEntry(discountEntryDto);
@@ -80,7 +86,7 @@ public class DiscountEntryController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDiscountEntry(@PathVariable String id) {
+    public ResponseEntity<Void> deleteDiscountEntry(@PathVariable @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for id") String id) {
         try {
             discountEntryService.deleteDiscountEntry(id);
 
