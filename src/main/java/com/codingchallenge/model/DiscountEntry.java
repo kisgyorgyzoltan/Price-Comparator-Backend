@@ -21,9 +21,7 @@ public class DiscountEntry {
     private LocalDate fromDate;
     private LocalDate toDate;
     private int percentageOfDiscount;
-
     private String storeName;
     private LocalDate date;
-
 }
 
