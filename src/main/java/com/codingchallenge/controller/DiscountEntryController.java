@@ -24,18 +24,26 @@ public class DiscountEntryController {
 
     private final DiscountEntryMapper discountEntryMapper;
 
-    public DiscountEntryController(DiscountEntryService discountEntryService, DiscountEntryMapper discountEntryMapper) {
+    public DiscountEntryController(DiscountEntryService discountEntryService,
+                                   DiscountEntryMapper discountEntryMapper
+    ) {
         this.discountEntryService = discountEntryService;
         this.discountEntryMapper = discountEntryMapper;
     }
 
     @GetMapping
-    public ResponseEntity<List<GetDiscountEntryDto>> getAllDiscountEntries(@RequestParam(value = "newest", required = false) boolean newest) {
+    public ResponseEntity<List<GetDiscountEntryDto>> getAllDiscountEntries(
+            @RequestParam(value = "productId", required = false)
+            @Pattern(regexp = "^[A-Z0-9]{1,20}$", message = "Product ID must be alphanumeric and between 1 and 20 characters.")
+            String productId,
+            @RequestParam(value = "newDiscounts", required = false)
+            Boolean newDiscounts,
+            @RequestParam(value = "orderByDiscountPercentageDesc", required = false)
+            Boolean orderByDiscountPercentageDesc
+    ) {
         try {
-            if (newest) {
-                return ResponseEntity.ok(discountEntryMapper.toGetDiscountEntryDtos(discountEntryService.getNewestDiscountEntries()));
-            }
-            return ResponseEntity.ok(discountEntryMapper.toGetDiscountEntryDtos(discountEntryService.getAllDiscountEntries()));
+            List<DiscountEntry> discountEntries = discountEntryService.getDiscountEntries(productId, newDiscounts, orderByDiscountPercentageDesc);
+            return ResponseEntity.ok(discountEntryMapper.toGetDiscountEntryDtos(discountEntries));
         } catch (IllegalArgumentException e) {
             log.error("Failed to fetch discounts: {}", e.getMessage());
 
@@ -44,7 +52,11 @@ public class DiscountEntryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GetDiscountEntryDto> getDiscountEntryById(@PathVariable(value = "id") @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for id") String id) {
+    public ResponseEntity<GetDiscountEntryDto> getDiscountEntryById(
+            @PathVariable(value = "id")
+            @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for id")
+            String id
+    ) {
         try {
             DiscountEntry discountEntry = discountEntryService.getDiscountEntryById(id);
 
@@ -57,7 +69,11 @@ public class DiscountEntryController {
     }
 
     @PostMapping
-    public ResponseEntity<GetDiscountEntryDto> createDiscountEntry(@RequestBody @Valid CreateDiscountEntryDto discountEntryDto) {
+    public ResponseEntity<GetDiscountEntryDto> createDiscountEntry(
+            @RequestBody
+            @Valid
+            CreateDiscountEntryDto discountEntryDto
+    ) {
         try {
             DiscountEntry discountEntry = discountEntryMapper.toDiscountEntry(discountEntryDto);
             DiscountEntry createdDiscountEntry = discountEntryService.createDiscountEntry(discountEntry);
@@ -71,7 +87,14 @@ public class DiscountEntryController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<GetDiscountEntryDto> updateDiscountEntry(@PathVariable @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for id") String id, @RequestBody @Valid CreateDiscountEntryDto discountEntryDto) {
+    public ResponseEntity<GetDiscountEntryDto> updateDiscountEntry(
+            @PathVariable
+            @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for id")
+            String id,
+            @RequestBody
+            @Valid
+            CreateDiscountEntryDto discountEntryDto
+    ) {
         try {
             DiscountEntry existingDiscountEntry = discountEntryService.getDiscountEntryById(id);
             DiscountEntry incomingDiscountEntry = discountEntryMapper.toDiscountEntry(discountEntryDto);
@@ -86,7 +109,11 @@ public class DiscountEntryController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDiscountEntry(@PathVariable @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for id") String id) {
+    public ResponseEntity<Void> deleteDiscountEntry(
+            @PathVariable
+            @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for id")
+            String id
+    ) {
         try {
             discountEntryService.deleteDiscountEntry(id);
 

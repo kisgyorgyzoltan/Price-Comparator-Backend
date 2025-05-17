@@ -23,7 +23,9 @@ public class ProductController {
 
     private final ProductMapper productMapper;
 
-    public ProductController(ProductService productService, ProductMapper productMapper) {
+    public ProductController(ProductService productService,
+                             ProductMapper productMapper
+    ) {
         this.productService = productService;
         this.productMapper = productMapper;
     }
@@ -40,7 +42,11 @@ public class ProductController {
     }
 
     @GetMapping("/{productId}")
-    public ResponseEntity<GetProductDto> getProductById(@PathVariable @Pattern(regexp = "^[A-Z0-9]{1,20}$", message = "Product ID must be alphanumeric and between 1 and 20 characters.") String productId) {
+    public ResponseEntity<GetProductDto> getProductById(
+            @PathVariable
+            @Pattern(regexp = "^[A-Z0-9]{1,20}$", message = "Product ID must be alphanumeric and between 1 and 20 characters.")
+            String productId
+    ) {
         try {
             Product product = productService.getProductById(productId);
             return ResponseEntity.ok(productMapper.toGetProductDto(product));
@@ -51,7 +57,11 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<GetProductDto> createProduct(@RequestBody @Valid CreateProductDto createProductDto) {
+    public ResponseEntity<GetProductDto> createProduct(
+            @RequestBody
+            @Valid
+            CreateProductDto createProductDto
+    ) {
         try {
             Product product = productMapper.toProduct(createProductDto);
             Product createdProduct = productService.createProduct(product);
@@ -63,7 +73,14 @@ public class ProductController {
     }
 
     @PutMapping("/{productId}")
-    public ResponseEntity<GetProductDto> updateProduct(@PathVariable @Pattern(regexp = "^[A-Z0-9]{1,20}$", message = "Product ID must be alphanumeric and between 1 and 20 characters.") String productId, @RequestBody @Valid CreateProductDto createProductDto) {
+    public ResponseEntity<GetProductDto> updateProduct(
+            @PathVariable
+            @Pattern(regexp = "^[A-Z0-9]{1,20}$", message = "Product ID must be alphanumeric and between 1 and 20 characters.")
+            String productId,
+            @RequestBody
+            @Valid
+            CreateProductDto createProductDto
+    ) {
         try {
             Product incomingProduct = productMapper.toProduct(createProductDto);
             Product dbProduct = productService.getProductById(productId);
@@ -76,7 +93,11 @@ public class ProductController {
     }
 
     @DeleteMapping("/{productId}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable @Pattern(regexp = "^[A-Z0-9]{1,20}$", message = "Product ID must be alphanumeric and between 1 and 20 characters.") String productId) {
+    public ResponseEntity<Void> deleteProduct(
+            @PathVariable
+            @Pattern(regexp = "^[A-Z0-9]{1,20}$", message = "Product ID must be alphanumeric and between 1 and 20 characters.")
+            String productId
+    ) {
         try {
             Product product = productService.getProductById(productId);
             productService.deleteProduct(product);

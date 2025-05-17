@@ -17,5 +17,6 @@ public class BestPriceResult {
     private String currency;
     private Integer discountApplied;
     private Date priceDate;
+    private Integer quantity;
 }
 

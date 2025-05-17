@@ -1,8 +1,8 @@
 package com.codingchallenge.service;
 
 import com.codingchallenge.model.DiscountEntry;
-import com.codingchallenge.model.Product;
 import com.codingchallenge.repository.DiscountEntryRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -17,12 +17,41 @@ public class DiscountEntryService {
         this.discountEntryRepository = discountEntryRepository;
     }
 
-    List<DiscountEntry> getDiscountEntriesForProduct(Product product) {
-        return discountEntryRepository.findByProductId(product.getProductId());
+    private Sort getSort(boolean orderByDiscount) {
+        return orderByDiscount ? Sort.by(Sort.Direction.DESC, "percentageOfDiscount") : Sort.unsorted();
     }
 
-    public List<DiscountEntry> getAllDiscountEntries() {
-        return discountEntryRepository.findAll();
+    private List<DiscountEntry> getDiscountEntriesForProduct(String productId, Sort sort) {
+        return discountEntryRepository.findByProductId(productId, sort);
+    }
+
+    public List<DiscountEntry> getDiscountEntries(String productId, Boolean newDiscounts, Boolean orderByDiscountPercentageDesc) {
+        boolean isNewest = Boolean.TRUE.equals(newDiscounts);
+        boolean orderByDiscount = Boolean.TRUE.equals(orderByDiscountPercentageDesc);
+
+        Sort sort = getSort(orderByDiscount);
+
+        if (isNewest) {
+            return getNewtDiscountEntries(productId, sort);
+        }
+
+        if (productId != null) {
+            return getDiscountEntriesForProduct(productId, sort);
+        }
+
+        return getAllDiscountEntries(sort);
+    }
+
+    private List<DiscountEntry> getAllDiscountEntries(Sort sort) {
+        return discountEntryRepository.findAll(sort);
+
+    }
+
+    private List<DiscountEntry> getNewtDiscountEntries(String productId, Sort sort) {
+        LocalDate dayAgo = LocalDate.now().minusDays(1);
+        return productId != null
+                ? discountEntryRepository.findByDateAfterAndProductId(dayAgo, productId, sort)
+                : discountEntryRepository.findByDateAfter(dayAgo, sort);
     }
 
     public DiscountEntry getDiscountEntryById(String id) {
@@ -40,15 +69,12 @@ public class DiscountEntryService {
         dbDiscountEntry.setToDate(incomingDiscountEntry.getToDate());
         dbDiscountEntry.setPercentageOfDiscount(incomingDiscountEntry.getPercentageOfDiscount());
         dbDiscountEntry.setStoreName(incomingDiscountEntry.getStoreName());
+        dbDiscountEntry.setDate(incomingDiscountEntry.getDate());
         return discountEntryRepository.save(dbDiscountEntry);
     }
 
     public void deleteDiscountEntry( String id) {
         Optional<DiscountEntry> discountEntry = discountEntryRepository.findById(id);
         discountEntry.ifPresent(discountEntryRepository::delete);
-    }
-
-    public List<DiscountEntry> getNewestDiscountEntries() {
-        return discountEntryRepository.findByDateAfter(LocalDate.now().minusDays(1));
     }
 }
