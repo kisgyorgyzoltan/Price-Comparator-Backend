@@ -2,12 +2,15 @@ package com.codingchallenge.service;
 
 import com.codingchallenge.model.Product;
 import com.codingchallenge.model.User;
+import com.codingchallenge.model.User.CartItem;
 import com.codingchallenge.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -62,11 +65,31 @@ public class UserService {
 
     public void clearCart(User user) {
         user.getShoppingCart().clear();
+        user.setLastCartUpdate(user.getLastCartUpdate());
         userRepository.save(user);
     }
 
-    public List<Product> addToCart(User user, Product product) {
-        user.getShoppingCart().add(product);
+    /**
+     * Adds a product to the user's shopping cart.
+     * If the product already exists in the cart, it updates the quantity.
+     **/
+    public List<CartItem> addToCart(User user, Product product, Integer quantity) {
+        String productId = product.getProductId();
+        Optional<CartItem> cartItem = user.getShoppingCart().stream()
+                .filter(item -> item.getProductId().equals(productId))
+                .findFirst();
+
+        if (cartItem.isPresent()) {
+            CartItem existingItem = cartItem.get();
+            existingItem.setQuantity(existingItem.getQuantity() + quantity);
+        } else {
+            CartItem newCartItem = new CartItem();
+            newCartItem.setProductId(productId);
+            newCartItem.setQuantity(quantity);
+            user.getShoppingCart().add(newCartItem);
+        }
+
+        user.setLastCartUpdate(LocalDateTime.now());
         userRepository.save(user);
         return user.getShoppingCart();
     }

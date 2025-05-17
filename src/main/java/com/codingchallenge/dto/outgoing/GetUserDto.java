@@ -1,5 +1,6 @@
 package com.codingchallenge.dto.outgoing;
 
+import com.codingchallenge.model.User.CartItem;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 public class GetUserDto {
     private String name;
-    private List<GetProductDto> shoppingCart;
+    private List<CartItem> shoppingCart;
     private LocalDateTime lastCartUpdate;
 }

@@ -18,6 +18,14 @@ public class User {
     private String id;
     private String name;
     private String password;
-    private List<Product> shoppingCart = List.of();
+    private List<CartItem> shoppingCart = List.of();
     private LocalDateTime  lastCartUpdate;
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class CartItem {
+        private String productId;
+        private int quantity;
+    }
 }

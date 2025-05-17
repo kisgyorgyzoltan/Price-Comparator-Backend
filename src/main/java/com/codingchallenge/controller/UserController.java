@@ -1,7 +1,7 @@
 package com.codingchallenge.controller;
 
+import com.codingchallenge.dto.incoming.AddProductToCartDto;
 import com.codingchallenge.dto.incoming.CreateUserDto;
-import com.codingchallenge.dto.outgoing.GetProductDto;
 import com.codingchallenge.dto.outgoing.GetShoppingListDto;
 import com.codingchallenge.dto.outgoing.GetUserDto;
 import com.codingchallenge.mapper.ProductMapper;
@@ -10,6 +10,7 @@ import com.codingchallenge.mapper.UserMapper;
 import com.codingchallenge.model.Product;
 import com.codingchallenge.model.ShoppingList;
 import com.codingchallenge.model.User;
+import com.codingchallenge.model.User.CartItem;
 import com.codingchallenge.service.ProductService;
 import com.codingchallenge.service.ShoppingListService;
 import com.codingchallenge.service.UserService;
@@ -39,7 +40,13 @@ public class UserController {
 
     private final ProductMapper productMapper;
 
-    public UserController(UserService userService, UserMapper userMapper, ProductService productService, ShoppingListService shoppingListService, ShoppingListMapper shoppingListMapper, ProductMapper productMapper) {
+    public UserController(UserService userService,
+                          UserMapper userMapper,
+                          ProductService productService,
+                          ShoppingListService shoppingListService,
+                          ShoppingListMapper shoppingListMapper,
+                          ProductMapper productMapper
+    ) {
         this.userService = userService;
         this.productService = productService;
         this.userMapper = userMapper;
@@ -131,12 +138,16 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}/cart")
-    public ResponseEntity<Void> clearCart(@PathVariable @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for id") String id) {
+    public ResponseEntity<GetUserDto> clearCart(
+            @PathVariable
+            @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for id")
+            String id
+    ) {
         try {
             User user = userService.getUserById(id);
             userService.clearCart(user);
-            return ResponseEntity.noContent()
-                    .build();
+            User updatedUser = userService.getUserById(id);
+            return ResponseEntity.ok(userMapper.toGetUserDto(updatedUser));
         } catch (IllegalArgumentException e) {
             log.error("Clear cart failed: {}", e.getMessage());
             return ResponseEntity.badRequest()
@@ -144,13 +155,21 @@ public class UserController {
         }
     }
 
-    @PostMapping("/{id}/cart")
-    public ResponseEntity<List<GetProductDto>> addToCart(@PathVariable @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for id") String id, @RequestBody  @Pattern(regexp = "^[A-Z0-9]{1,20}$", message = "Product ID must be alphanumeric and between 1 and 20 characters.") String productId) {
+    @PostMapping("/{userId}/cart")
+    public ResponseEntity<GetUserDto> addToCart(
+            @PathVariable
+            @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for id")
+            String userId,
+            @RequestBody
+            @Valid
+            AddProductToCartDto addProductToCartDto) {
         try {
-            User user = userService.getUserById(id);
-            Product product = productService.getProductById(productId);
-            List<Product> cart = userService.addToCart(user, product);
-            return ResponseEntity.ok(productMapper.toGetProductDtos(cart));
+            User user = userService.getUserById(userId);
+            Product product = productService.getProductById(addProductToCartDto.getProductId());
+            List<CartItem> cartItems =  userService.addToCart(user, product, addProductToCartDto.getQuantity());
+            User updatedUser = userService.getUserById(userId);
+
+            return ResponseEntity.ok(userMapper.toGetUserDto(updatedUser));
         } catch (IllegalArgumentException e) {
             log.error("Add to cart failed: {}", e.getMessage());
             return ResponseEntity.badRequest()
@@ -162,7 +181,7 @@ public class UserController {
     public ResponseEntity<GetShoppingListDto> generateShoppingList(@PathVariable @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for id") String userId) {
         try {
             User user = userService.getUserById(userId);
-            List<Product> cart = user.getShoppingCart();
+            List<CartItem> cart = user.getShoppingCart();
 
             ShoppingList shoppingList = shoppingListService.getBestPrices(userId, cart);
             return ResponseEntity.ok(shoppingListMapper.toGetShoppingListDto(shoppingList));
@@ -170,6 +189,19 @@ public class UserController {
         } catch (IllegalArgumentException e) {
             log.error("Generate shopping list failed: {}", e.getMessage());
             return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+    @GetMapping("/{userId}/shopping-list")
+    public ResponseEntity<List<GetShoppingListDto>> getShoppingLists(@PathVariable @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for id") String userId) {
+        try {
+            User user = userService.getUserById(userId);
+            List<ShoppingList> shoppingLists = shoppingListService.getShoppingListsByUserId(user);
+            return ResponseEntity.ok(shoppingListMapper.toGetShoppingListDtos(shoppingLists));
+        } catch (IllegalArgumentException e) {
+            log.error("Get shopping list failed: {}", e.getMessage());
+            return ResponseEntity.badRequest()
+                    .build();
         }
     }
 }
