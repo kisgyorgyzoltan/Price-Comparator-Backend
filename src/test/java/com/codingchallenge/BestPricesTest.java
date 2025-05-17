@@ -91,26 +91,26 @@ class BestPricesTest {
 		String testProductProductId = testProduct.getProductId();
 
 		PriceEntry betterPriceEntry = new PriceEntry(null,
-												testProductProductId,
-												100.0,
-												"RON",
-												"Store1",
-												LocalDate.now()
+			testProductProductId,
+			100.0,
+			"RON",
+			"Store1",
+			LocalDate.now()
 		);
 		PriceEntry worsePriceEntry = new PriceEntry(null,
-												testProductProductId,
-												95.0,
-												"RON",
-												"Store2",
-												LocalDate.now()
+			testProductProductId,
+			95.0,
+			"RON",
+			"Store2",
+			LocalDate.now()
 		);
 
 		DiscountEntry discountEntry = new DiscountEntry(null,
-														testProductProductId,
-														LocalDate.now().minusDays(3),
-														LocalDate.now().plusDays(3),
-														10,
-														"Store1", LocalDate.now().minusDays(5)
+			testProductProductId,
+			LocalDate.now().minusDays(3),
+			LocalDate.now().plusDays(3),
+			10,
+			"Store1", LocalDate.now().minusDays(5)
 		);
 		Double expectedPrice = betterPriceEntry.getPrice() - (betterPriceEntry.getPrice() * discountEntry.getPercentageOfDiscount() / 100);
 		runPriceTest(betterPriceEntry, worsePriceEntry, List.of(discountEntry), expectedPrice);
@@ -119,26 +119,26 @@ class BestPricesTest {
 	@Test
 	void betterWithoutDiscount() {
 		PriceEntry betterPriceEntry = new PriceEntry(null,
-												testProductId,
-													 90.0,
-												"RON",
-												"Store1",
-												LocalDate.now()
+			testProductId,
+				 90.0,
+			"RON",
+			"Store1",
+			LocalDate.now()
 		);
 		PriceEntry worsePriceEntry = new PriceEntry(null,
-												testProductId,
-													115.0,
-												"RON",
-												"Store2",
-												LocalDate.now()
+			testProductId,
+				115.0,
+			"RON",
+			"Store2",
+			LocalDate.now()
 		);
 
 		DiscountEntry discountEntry = new DiscountEntry(null,
-														testProductId,
-														LocalDate.now().minusDays(3),
-														LocalDate.now().plusDays(3),
-														10,
-														"Store2", LocalDate.now().minusDays(3)
+			testProductId,
+			LocalDate.now().minusDays(3),
+			LocalDate.now().plusDays(3),
+			10,
+			"Store2", LocalDate.now().minusDays(3)
 		);
 		Double expectedPrice = betterPriceEntry.getPrice();
 		runPriceTest(betterPriceEntry, worsePriceEntry, List.of(discountEntry), expectedPrice);
@@ -148,26 +148,26 @@ class BestPricesTest {
 	void noActiveDiscount() {
 
 		PriceEntry betterPriceEntry = new PriceEntry(null,
-												testProductId,
-												95.0,
-												"RON",
-												"Store2",
-												LocalDate.now()
+			testProductId,
+			95.0,
+			"RON",
+			"Store2",
+			LocalDate.now()
 		);
 		PriceEntry worsePriceEntry = new PriceEntry(null,
-												testProductId,
-												100.0,
-												"RON",
-												"Store1",
-												LocalDate.now()
+			testProductId,
+			100.0,
+			"RON",
+			"Store1",
+			LocalDate.now()
 		);
 
 		DiscountEntry discountEntry = new DiscountEntry(null,
-														testProductId,
-														LocalDate.now().minusDays(20),
-														LocalDate.now().minusDays(15),
-														10,
-														"Store1", LocalDate.now().minusDays(25)
+			testProductId,
+			LocalDate.now().minusDays(20),
+			LocalDate.now().minusDays(15),
+			10,
+			"Store1", LocalDate.now().minusDays(25)
 		);
 		Double expectedPrice = betterPriceEntry.getPrice();
 		runPriceTest(betterPriceEntry, worsePriceEntry, List.of(discountEntry), expectedPrice);
@@ -176,35 +176,35 @@ class BestPricesTest {
 	@Test
 	void bothDiscount() {
 		PriceEntry betterPriceEntry = new PriceEntry(null,
-												testProductId,
-												100.0,
-												"RON",
-												"Store1",
-												LocalDate.now()
+			testProductId,
+			100.0,
+			"RON",
+			"Store1",
+			LocalDate.now()
 		);
 		PriceEntry worsePriceEntry = new PriceEntry(null,
-												testProductId,
-													100.0,
-												"RON",
-												"Store2",
-												LocalDate.now()
+			testProductId,
+				100.0,
+			"RON",
+			"Store2",
+			LocalDate.now()
 		);
 		priceEntryRepository.save(betterPriceEntry);
 		priceEntryRepository.save(worsePriceEntry);
 
 		DiscountEntry discountEntry = new DiscountEntry(null,
-														testProductId,
-														LocalDate.now().minusDays(3),
-														LocalDate.now().plusDays(3),
-														10,
-														"Store1", LocalDate.now().minusDays(5)
+			testProductId,
+			LocalDate.now().minusDays(3),
+			LocalDate.now().plusDays(3),
+			10,
+			"Store1", LocalDate.now().minusDays(5)
 		);
 		DiscountEntry discountEntry2 = new DiscountEntry(null,
-														testProductId,
-														LocalDate.now().minusDays(3),
-														LocalDate.now().plusDays(3),
-														10,
-														"Store2", LocalDate.now().minusDays(5)
+			testProductId,
+			LocalDate.now().minusDays(3),
+			LocalDate.now().plusDays(3),
+			10,
+			"Store2", LocalDate.now().minusDays(5)
 		);
 		discountEntryRepository.save(discountEntry);
 		discountEntryRepository.save(discountEntry2);
@@ -228,26 +228,26 @@ class BestPricesTest {
 	@Test
 	public void thirdStoreDiscount() {
 		PriceEntry betterPriceEntry = new PriceEntry(null,
-												testProductId,
-												99.0,
-												"RON",
-												"Store1",
-												LocalDate.now()
+			 testProductId,
+			 99.0,
+			 "RON",
+			 "Store1",
+			 LocalDate.now()
 		);
 		PriceEntry worsePriceEntry = new PriceEntry(null,
-												testProductId,
-													100.0,
-												"RON",
-												"Store2",
-												LocalDate.now()
+			testProductId,
+				100.0,
+			"RON",
+			"Store2",
+			LocalDate.now()
 		);
 
 		DiscountEntry discountEntry = new DiscountEntry(null,
-														testProductId,
-														LocalDate.now().minusDays(3),
-														LocalDate.now().plusDays(3),
-														10,
-														"Store3", LocalDate.now().minusDays(5)
+			testProductId,
+			LocalDate.now().minusDays(3),
+			LocalDate.now().plusDays(3),
+			10,
+			"Store3", LocalDate.now().minusDays(5)
 		);
 		Double expectedPrice = betterPriceEntry.getPrice();
 		runPriceTest(betterPriceEntry, worsePriceEntry, List.of(discountEntry), expectedPrice);
@@ -279,18 +279,18 @@ class BestPricesTest {
 	@Test
 	public void sameStore() {
 		PriceEntry betterPriceEntry = new PriceEntry(null,
-												testProductId,
-												99.0,
-												"RON",
-												"Store1",
-												LocalDate.now()
+			testProductId,
+			99.0,
+			"RON",
+			"Store1",
+			LocalDate.now()
 		);
 		PriceEntry worsePriceEntry = new PriceEntry(null,
-												testProductId,
-													100.0,
-												"RON",
-												"Store1",
-												LocalDate.now()
+			testProductId,
+				100.0,
+			"RON",
+			"Store1",
+			LocalDate.now()
 		);
 
 		Double expectedPrice = betterPriceEntry.getPrice();
@@ -300,26 +300,26 @@ class BestPricesTest {
 	@Test
 	public void zeroDiscount() {
 		PriceEntry betterPriceEntry = new PriceEntry(null,
-												testProductId,
-												99.0,
-												"RON",
-												"Store1",
-												LocalDate.now()
+			testProductId,
+			99.0,
+			"RON",
+			"Store1",
+			LocalDate.now()
 		);
 		PriceEntry worsePriceEntry = new PriceEntry(null,
-												testProductId,
-													100.0,
-												"RON",
-												"Store2",
-												LocalDate.now()
+			testProductId,
+				100.0,
+			"RON",
+			"Store2",
+			LocalDate.now()
 		);
 
 		DiscountEntry discountEntry = new DiscountEntry(null,
-														testProductId,
-														LocalDate.now().minusDays(3),
-														LocalDate.now().plusDays(3),
-														0,
-														"Store2", LocalDate.now().minusDays(5)
+			testProductId,
+			LocalDate.now().minusDays(3),
+			LocalDate.now().plusDays(3),
+			0,
+			"Store2", LocalDate.now().minusDays(5)
 		);
 		Double expectedPrice = betterPriceEntry.getPrice();
 		runPriceTest(betterPriceEntry, worsePriceEntry, List.of(discountEntry), expectedPrice);
@@ -328,18 +328,18 @@ class BestPricesTest {
 	@Test
 	public void samePrice() {
 		PriceEntry betterPriceEntry = new PriceEntry(null,
-												testProductId,
-												100.0,
-												"RON",
-												"Store1",
-												LocalDate.now()
+			testProductId,
+			100.0,
+			"RON",
+			"Store1",
+			LocalDate.now()
 		);
 		PriceEntry worsePriceEntry = new PriceEntry(null,
-												testProductId,
-													100.0,
-												"RON",
-												"Store2",
-												LocalDate.now()
+			testProductId,
+				100.0,
+			"RON",
+			"Store2",
+			LocalDate.now()
 		);
 		priceEntryRepository.save(betterPriceEntry);
 		priceEntryRepository.save(worsePriceEntry);
