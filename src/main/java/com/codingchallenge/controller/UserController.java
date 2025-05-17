@@ -38,8 +38,6 @@ public class UserController {
 
     private final UserMapper userMapper;
 
-    private final ProductMapper productMapper;
-
     public UserController(UserService userService,
                           UserMapper userMapper,
                           ProductService productService,
@@ -52,11 +50,13 @@ public class UserController {
         this.userMapper = userMapper;
         this.shoppingListService = shoppingListService;
         this.shoppingListMapper = shoppingListMapper;
-        this.productMapper = productMapper;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Boolean> login(@RequestBody @Valid CreateUserDto userDto) {
+    public ResponseEntity<Boolean> login(
+            @RequestBody
+            @Valid CreateUserDto userDto
+    ) {
         try {
             User user = userMapper.toUser(userDto);
             if (!userService.login(user)) {
@@ -71,7 +71,11 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<GetUserDto> register(@RequestBody @Valid CreateUserDto userDto) {
+    public ResponseEntity<GetUserDto> register(
+            @RequestBody
+            @Valid
+            CreateUserDto userDto
+    ) {
         try {
             log.warn("Registering user: {}", userDto.toString());
             User user = userService.register(userDto.getName(), userDto.getPassword());
@@ -86,7 +90,10 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GetUserDto> getUser(@PathVariable String id) {
+    public ResponseEntity<GetUserDto> getUser(
+            @PathVariable
+            String id
+    ) {
         try {
             User user = userService.getUserById(id);
             return ResponseEntity.ok(userMapper.toGetUserDto(user));
@@ -98,7 +105,15 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<GetUserDto> updateUser(@PathVariable String id, @RequestBody String oldPassword, @RequestBody @Valid CreateUserDto userDto) {
+    public ResponseEntity<GetUserDto> updateUser(
+            @PathVariable
+            String id,
+            @RequestBody
+            String oldPassword,
+            @RequestBody
+            @Valid
+            CreateUserDto userDto
+    ) {
         try {
             User incomingUser = userMapper.toUser(userDto);
             User dbUser = userService.getUserById(id);
@@ -124,7 +139,11 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for id") String id) {
+    public ResponseEntity<Void> deleteUser(
+            @PathVariable
+            @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for id")
+            String id
+    ) {
         try {
             User user = userService.getUserById(id);
             userService.deleteUser(user);
@@ -162,7 +181,8 @@ public class UserController {
             String userId,
             @RequestBody
             @Valid
-            AddProductToCartDto addProductToCartDto) {
+            AddProductToCartDto addProductToCartDto
+    ) {
         try {
             User user = userService.getUserById(userId);
             Product product = productService.getProductById(addProductToCartDto.getProductId());
@@ -177,8 +197,44 @@ public class UserController {
         }
     }
 
+    @DeleteMapping("/{userId}/cart/{productId}")
+    public ResponseEntity<GetUserDto> removeFromCart(
+            @PathVariable
+            @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for userId")
+            String userId,
+            @PathVariable
+            @Pattern(regexp = "^[A-Z0-9]{1,20}$", message = "Product ID must be alphanumeric and between 1 and 20 characters.")
+            String productId,
+            @RequestBody
+            @Valid
+            AddProductToCartDto addProductToCartDto
+    ) {
+        try {
+            User user = userService.getUserById(userId);
+
+            if (!productId.equals(addProductToCartDto.getProductId())) {
+                return ResponseEntity.badRequest()
+                        .build();
+            }
+
+            Product product = productService.getProductById(productId);
+            List<CartItem> cartItems =  userService.removeFromCart(user, product, addProductToCartDto.getQuantity());
+            User updatedUser = userService.getUserById(userId);
+
+            return ResponseEntity.ok(userMapper.toGetUserDto(updatedUser));
+        } catch (IllegalArgumentException e) {
+            log.error("Remove from cart failed: {}", e.getMessage());
+            return ResponseEntity.badRequest()
+                    .build();
+        }
+    }
+
     @PostMapping("/{userId}/shopping-list")
-    public ResponseEntity<GetShoppingListDto> generateShoppingList(@PathVariable @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for id") String userId) {
+    public ResponseEntity<GetShoppingListDto> generateShoppingList(
+            @PathVariable
+            @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for id")
+            String userId
+    ) {
         try {
             User user = userService.getUserById(userId);
             List<CartItem> cart = user.getShoppingCart();
@@ -193,7 +249,11 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/shopping-list")
-    public ResponseEntity<List<GetShoppingListDto>> getShoppingLists(@PathVariable @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for id") String userId) {
+    public ResponseEntity<List<GetShoppingListDto>> getShoppingLists(
+            @PathVariable
+            @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for userId")
+            String userId
+    ) {
         try {
             User user = userService.getUserById(userId);
             List<ShoppingList> shoppingLists = shoppingListService.getShoppingListsByUserId(user);
