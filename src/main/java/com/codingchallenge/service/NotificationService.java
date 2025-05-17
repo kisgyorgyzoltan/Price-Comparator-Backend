@@ -1,9 +1,9 @@
 package com.codingchallenge.service;
 
 import com.codingchallenge.model.Notification;
-import com.codingchallenge.model.Product;
 import com.codingchallenge.model.ShoppingList;
 import com.codingchallenge.model.User;
+import com.codingchallenge.model.User.CartItem;
 import com.codingchallenge.repository.NotificationRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -38,7 +38,7 @@ public class NotificationService {
         List<User> users = userService.getAllUsers();
 
         for (User user : users) {
-            List<Product> productsInCart = user.getShoppingCart();
+            List<CartItem> productsInCart = user.getShoppingCart();
             String userId = user.getId();
             ShoppingList newShoppingList = shoppingListService.getBestPrices(userId, productsInCart);
             Notification notification = new Notification(
