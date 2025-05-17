@@ -1,9 +1,8 @@
 package com.codingchallenge.repository;
 
-import com.codingchallenge.dto.internal.BestPriceResult;
+import com.codingchallenge.dto.internal.BestProductPriceResult;
 import com.codingchallenge.dto.outgoing.GetPriceHistoryDto;
 import com.codingchallenge.model.PriceEntry;
-import com.codingchallenge.model.ShoppingList;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
@@ -148,7 +147,7 @@ public interface PriceEntryRepository extends MongoRepository<PriceEntry, String
             """
 
     })
-    List<BestPriceResult> getBestPrices(LocalDate date, List<String> productIds);
+    List<BestProductPriceResult> generateBestPrices(LocalDate date, List<String> productIds);
 
     @Aggregation(pipeline = {
             """

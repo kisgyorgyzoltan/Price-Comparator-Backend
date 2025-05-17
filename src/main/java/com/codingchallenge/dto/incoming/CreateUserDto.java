@@ -2,9 +2,11 @@ package com.codingchallenge.dto.incoming;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class CreateUserDto {
     @NotNull(message = "Name cannot be null")
     @Pattern(regexp = "^[a-zA-Z0-9]{3,20}$", message = "Name must be alphanumeric and between 3 and 20 characters long")

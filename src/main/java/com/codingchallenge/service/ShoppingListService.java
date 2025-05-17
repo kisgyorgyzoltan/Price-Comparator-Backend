@@ -1,7 +1,6 @@
 package com.codingchallenge.service;
 
-import com.codingchallenge.dto.internal.BestPriceResult;
-import com.codingchallenge.model.Product;
+import com.codingchallenge.dto.internal.BestProductPriceResult;
 import com.codingchallenge.model.ShoppingList;
 import com.codingchallenge.model.User;
 import com.codingchallenge.model.User.CartItem;
@@ -41,18 +40,18 @@ public class ShoppingListService {
         shoppingList.ifPresent(shoppingListRepository::delete);
     }
 
-    public ShoppingList getBestPrices(String userId, List<CartItem> cartItems) {
+    public ShoppingList generateBestPrices(String userId, List<CartItem> cartItems) {
         List<String> productIds = cartItems.stream()
                 .map(CartItem::getProductId)
                 .toList();
         LocalDate today = LocalDate.now();
-        List<BestPriceResult> bestPriceResults = priceEntryRepository.getBestPrices(today, productIds);
+        List<BestProductPriceResult> bestPriceResults = priceEntryRepository.generateBestPrices(today, productIds);
 
         // set the quantity for each product in the cart
         for (CartItem cartItem : cartItems) {
             String productId = cartItem.getProductId();
             int quantity = cartItem.getQuantity();
-            for (BestPriceResult result : bestPriceResults) {
+            for (BestProductPriceResult result : bestPriceResults) {
                 if (result.getProductId().equals(productId)) {
                     result.setQuantity(quantity);
                     break;
@@ -64,13 +63,13 @@ public class ShoppingListService {
         return createShoppingList(bestPriceResults, userId);
     }
 
-    private ShoppingList createShoppingList(List<BestPriceResult> bestPriceResults, String userId) {
+    private ShoppingList createShoppingList(List<BestProductPriceResult> bestPriceResults, String userId) {
         ShoppingList shoppingList = new ShoppingList();
         shoppingList.setProducts(new HashMap<>());
         shoppingList.setCreatedDate(LocalDate.now());
         shoppingList.setUserId(userId);
         shoppingList.setName("Best_Prices_" + LocalDate.now() + "_" + UUID.randomUUID());
-        for (BestPriceResult result : bestPriceResults) {
+        for (BestProductPriceResult result : bestPriceResults) {
             String storeName = result.getStoreName();
             if (!shoppingList.getProducts().containsKey(storeName)) {
                 shoppingList.getProducts().put(storeName, new ArrayList<>());

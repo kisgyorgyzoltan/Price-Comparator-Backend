@@ -1,6 +1,6 @@
 package com.codingchallenge.model;
 
-import com.codingchallenge.dto.internal.BestPriceResult;
+import com.codingchallenge.dto.internal.BestProductPriceResult;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,7 +24,7 @@ public class ShoppingList {
     private String name;
     private LocalDate createdDate;
     // storeName -> list of products from that store
-    private HashMap<String, List<BestPriceResult>> products;
+    private HashMap<String, List<BestProductPriceResult>> products;
 }
 
 

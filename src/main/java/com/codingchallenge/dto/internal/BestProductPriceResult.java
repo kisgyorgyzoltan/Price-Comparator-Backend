@@ -9,7 +9,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BestPriceResult {
+public class BestProductPriceResult {
     private String productId;
     private String storeName;
     private Double originalPrice;

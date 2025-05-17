@@ -40,7 +40,7 @@ public class NotificationService {
         for (User user : users) {
             List<CartItem> productsInCart = user.getShoppingCart();
             String userId = user.getId();
-            ShoppingList newShoppingList = shoppingListService.getBestPrices(userId, productsInCart);
+            ShoppingList newShoppingList = shoppingListService.generateBestPrices(userId, productsInCart);
             Notification notification = new Notification(
                     null,
                     userId,

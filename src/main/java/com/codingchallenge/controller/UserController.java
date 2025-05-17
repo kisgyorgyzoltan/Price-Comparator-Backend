@@ -71,7 +71,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<GetUserDto> register(
+        public ResponseEntity<GetUserDto> register(
             @RequestBody
             @Valid
             CreateUserDto userDto
@@ -239,7 +239,7 @@ public class UserController {
             User user = userService.getUserById(userId);
             List<CartItem> cart = user.getShoppingCart();
 
-            ShoppingList shoppingList = shoppingListService.getBestPrices(userId, cart);
+            ShoppingList shoppingList = shoppingListService.generateBestPrices(userId, cart);
             return ResponseEntity.ok(shoppingListMapper.toGetShoppingListDto(shoppingList));
 
         } catch (IllegalArgumentException e) {
