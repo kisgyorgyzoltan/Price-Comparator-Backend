@@ -4,6 +4,8 @@ import com.codingchallenge.model.Product;
 import com.codingchallenge.model.User;
 import com.codingchallenge.model.User.CartItem;
 import com.codingchallenge.repository.UserRepository;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import org.springframework.stereotype.Service;
 
 import java.security.MessageDigest;
@@ -116,5 +118,26 @@ public class UserService {
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    public List<CartItem> removeFromCart(User user, Product product, @Positive @NotNull Integer quantity) {
+        String productId = product.getProductId();
+        Optional<CartItem> cartItem = user.getShoppingCart().stream()
+                .filter(item -> item.getProductId().equals(productId))
+                .findFirst();
+
+        if (cartItem.isPresent()) {
+            CartItem existingItem = cartItem.get();
+            int newQuantity = existingItem.getQuantity() - quantity;
+            if (newQuantity <= 0) {
+                user.getShoppingCart().remove(existingItem);
+            } else {
+                existingItem.setQuantity(newQuantity);
+            }
+        }
+
+        user.setLastCartUpdate(LocalDateTime.now());
+        userRepository.save(user);
+        return user.getShoppingCart();
     }
 }
