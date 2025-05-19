@@ -2,8 +2,8 @@ package com.codingchallenge.service;
 
 import com.codingchallenge.dto.outgoing.GetPriceHistoryDto;
 import com.codingchallenge.model.PriceEntry;
-import com.codingchallenge.model.Product;
 import com.codingchallenge.repository.PriceEntryRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,16 +18,16 @@ public class PriceEntryService {
         this.priceEntryRepository = priceEntryRepository;
     }
 
-    public List<PriceEntry> getPriceEntriesForProduct(Product product) {
-        return priceEntryRepository.findByProductId(product.getProductId());
-    }
-
     public List<GetPriceHistoryDto> getPriceHistory (String productId, String storeName, String productCategory, String brand) {
         return priceEntryRepository.getPriceHistory(productId, storeName, productCategory, brand);
     }
 
-    public List<PriceEntry> getPriceEntries() {
-        return priceEntryRepository.findAll();
+    public List<PriceEntry> getPriceEntries(String productId, Boolean orderByValue) {
+        Sort sort = (orderByValue != null && orderByValue) ? Sort.by(Sort.Order.desc("valuePerUnit")) : Sort.unsorted();
+        if (productId != null && !productId.isEmpty()) {
+            return priceEntryRepository.findByProductId(productId, sort);
+        }
+        return priceEntryRepository.findAll(sort);
     }
 
     public PriceEntry getPriceEntryById(String id) {

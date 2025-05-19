@@ -3,6 +3,7 @@ package com.codingchallenge.repository;
 import com.codingchallenge.dto.internal.BestProductPriceResult;
 import com.codingchallenge.dto.outgoing.GetPriceHistoryDto;
 import com.codingchallenge.model.PriceEntry;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
@@ -12,7 +13,7 @@ import java.util.List;
 
 @Repository
 public interface PriceEntryRepository extends MongoRepository<PriceEntry, String> {
-    List<PriceEntry> findByProductId(String productId);
+    List<PriceEntry> findByProductId(String productId, Sort sort);
 
     @Aggregation(pipeline = {
             """
@@ -230,5 +231,5 @@ public interface PriceEntryRepository extends MongoRepository<PriceEntry, String
              }
             """
     })
-    public List<GetPriceHistoryDto> getPriceHistory(String productId, String storeName, String productCategory, String brand);
+    List<GetPriceHistoryDto> getPriceHistory(String productId, String storeName, String productCategory, String brand);
 }
