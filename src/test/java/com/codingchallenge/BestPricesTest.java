@@ -139,7 +139,6 @@ class BestPricesTest {
                                                          LocalDate.now().minusDays(5));
         discountEntryRepository.save(discountEntry);
         discountEntryRepository.save(discountEntry2);
-        Double expectedPrice = betterPriceEntry.getPrice() - (betterPriceEntry.getPrice() * discountEntry.getPercentageOfDiscount() / 100);
         ResponseEntity<GetShoppingListDto> result = restTemplate.postForEntity(
             "http://localhost:" + port + "/api/users/" + testUserId + "/shopping-list", null, GetShoppingListDto.class
 
@@ -275,8 +274,6 @@ class BestPricesTest {
                                                     100.0);
         priceEntryRepository.save(betterPriceEntry);
         priceEntryRepository.save(worsePriceEntry);
-
-        Double expectedPrice = betterPriceEntry.getPrice();
 
         ResponseEntity<GetShoppingListDto> result = restTemplate.postForEntity(
             "http://localhost:" + port + "/api/users/" + testUserId + "/shopping-list", null, GetShoppingListDto.class

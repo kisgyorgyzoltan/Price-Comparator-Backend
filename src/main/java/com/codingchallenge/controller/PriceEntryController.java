@@ -33,9 +33,14 @@ public class PriceEntryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<GetPriceEntryDto>> getPriceEntries() {
+    public ResponseEntity<List<GetPriceEntryDto>> getPriceEntries(@RequestParam(value = "productId", required = false)
+                                                                  @Pattern(regexp = "^[A-Z0-9]{1,20}$", message = "Product ID must be alphanumeric and between 1 and 20 characters.")
+                                                                  String productId,
+                                                                  @RequestParam(value = "orderByValue", required = false)
+                                                                  Boolean orderByValue
+    ) {
         try {
-            List<PriceEntry> priceEntries = priceEntryService.getPriceEntries();
+            List<PriceEntry> priceEntries = priceEntryService.getPriceEntries(productId,orderByValue);
 
             return ResponseEntity.ok(priceEntryMapper.toGetPriceEntryDtos(priceEntries));
         } catch (IllegalArgumentException e) {

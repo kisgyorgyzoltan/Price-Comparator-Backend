@@ -185,6 +185,7 @@ public class UserController {
             User user = userService.getUserById(userId);
             Product product = productService.getProductById(addProductToCartDto.getProductId());
             List<CartItem> cartItems =  userService.addToCart(user, product, addProductToCartDto.getQuantity());
+            log.debug("Number of different items in cart: {}", cartItems.size());
             User updatedUser = userService.getUserById(userId);
 
             return ResponseEntity.ok(userMapper.toGetUserDto(updatedUser));
@@ -217,6 +218,7 @@ public class UserController {
 
             Product product = productService.getProductById(productId);
             List<CartItem> cartItems =  userService.removeFromCart(user, product, addProductToCartDto.getQuantity());
+            log.debug("Remaining number of different items in cart: {}", cartItems.size());
             User updatedUser = userService.getUserById(userId);
 
             return ResponseEntity.ok(userMapper.toGetUserDto(updatedUser));
