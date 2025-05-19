@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -40,8 +41,8 @@ public class PriceAlertService {
     }
 
     public void deletePriceAlert(String id) {
-        PriceAlert priceAlert = getPriceAlertById(id);
-        priceAlertRepository.delete(priceAlert);
+        Optional<PriceAlert> priceAlert = priceAlertRepository.findById(id);
+        priceAlert.ifPresent(priceAlertRepository::delete);
     }
 
     public PriceAlert updatePriceAlert(String id, PriceAlert existingPriceAlert, PriceAlert incomingPriceAlert) {
