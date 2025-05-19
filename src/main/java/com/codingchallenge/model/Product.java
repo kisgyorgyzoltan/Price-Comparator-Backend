@@ -18,6 +18,6 @@ public class Product {
     private String productName;
     private String productCategory;
     private String brand;
-    private double packageQuantity;
+    private Double packageQuantity;
     private String packageUnit;
 }

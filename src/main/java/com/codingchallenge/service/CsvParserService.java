@@ -39,28 +39,38 @@ public class CsvParserService {
         String packageUnit = line[unitIndex];
 
         return Product.builder()
-                .productId(productId)
-                .productName(productName)
-                .productCategory(productCategory)
-                .brand(brand)
-                .packageQuantity(packageQuantity)
-                .packageUnit(packageUnit)
-                .build();
+            .productId(productId)
+            .productName(productName)
+            .productCategory(productCategory)
+            .brand(brand)
+            .packageQuantity(packageQuantity)
+            .packageUnit(packageUnit)
+            .build();
     }
 
 
-    private static PriceEntry getPriceEntryCsv(String storeName, LocalDate date, String[] line) {
-        String productId = line[0];
-        double price = Double.parseDouble(line[6]);
-        String currency = line[7];
+    private static PriceEntry getPriceEntryCsv(String storeName, LocalDate date, String[] line,
+                                               int productIndex, int priceIndex, int currencyIndex, int quantityIndex, int unitIndex) {
+        String productId = line[productIndex];
+        double price = Double.parseDouble(line[priceIndex]);
+        String currency = line[currencyIndex];
+        double packageQuantity = Double.parseDouble(line[quantityIndex]);
+        String packageUnit = line[unitIndex];
+        Double valuePerUnit = price / packageQuantity;
+        String valuePerUnitDisplay = String.format("%.2f %s/%s", valuePerUnit, currency, packageUnit);
+
 
         return PriceEntry.builder()
-                .productId(productId)
-                .price(price)
-                .currency(currency)
-                .storeName(storeName)
-                .date(date)
-                .build();
+            .productId(productId)
+            .price(price)
+            .currency(currency)
+            .storeName(storeName)
+            .date(date)
+            .packageQuantity(packageQuantity)
+            .packageUnit(packageUnit)
+            .valuePerUnit(valuePerUnit)
+            .valuePerUnitDisplay(valuePerUnitDisplay)
+            .build();
     }
 
     private static DiscountEntry getDiscountEntryCsv(String storeName, LocalDate date, String[] line) {
@@ -69,14 +79,14 @@ public class CsvParserService {
         LocalDate toDate = LocalDate.parse(line[7]);
         int discountPercentage = Integer.parseInt(line[8]);
 
-        return DiscountEntry.builder().
-                productId(productId)
-                .fromDate(fromDate)
-                .toDate(toDate)
-                .percentageOfDiscount(discountPercentage)
-                .storeName(storeName)
-                .date(date)
-                .build();
+        return DiscountEntry.builder()
+            .productId(productId)
+            .fromDate(fromDate)
+            .toDate(toDate)
+            .percentageOfDiscount(discountPercentage)
+            .storeName(storeName)
+            .date(date)
+            .build();
     }
 
     public PriceParseResult parsePriceFile(InputStream csvInputStream, String storeName, LocalDate date) {
@@ -94,7 +104,7 @@ public class CsvParserService {
                 String[] line;
                 while ((line = csvReader.readNext()) != null) {
                     Product product = getProductCsv(line, 2, 3, 4, 5);
-                    PriceEntry entry = getPriceEntryCsv(storeName, date, line);
+                    PriceEntry entry = getPriceEntryCsv(storeName, date, line, 0, 6, 7, 4, 5);
 
                     priceEntries.add(entry);
                     products.add(product);
@@ -114,11 +124,13 @@ public class CsvParserService {
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(csvInputStream))) {
             try (CSVReader csvReader = new CSVReaderBuilder(reader)
-                    .withSkipLines(1)
-                    .withCSVParser(new CSVParserBuilder()
-                                   .withSeparator(';')
-                                   .build())
-                    .build()) {
+                .withSkipLines(1)
+                .withCSVParser(
+                    new CSVParserBuilder()
+                        .withSeparator(';')
+                        .build()
+                )
+                .build()) {
                 String[] line;
 
                 while ((line = csvReader.readNext()) != null) {

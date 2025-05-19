@@ -17,7 +17,10 @@ public class PriceEntry {
     private String productId;
     private double price;
     private String currency;
-
     private String storeName;
     private LocalDate date;
+    private Double packageQuantity;
+    private String packageUnit;
+    private String valuePerUnitDisplay;
+    private Double valuePerUnit;
 }
