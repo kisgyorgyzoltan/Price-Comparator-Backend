@@ -146,9 +146,11 @@ public class UserController {
             @Valid
             AddProductToCartDto addProductToCartDto
     ) {
+        String productId = addProductToCartDto.getProductId();
+        Integer quantity = addProductToCartDto.getQuantity();
         User user = userService.getUserById(userId);
-        Product product = productService.getProductById(addProductToCartDto.getProductId());
-        List<CartItem> cartItems =  userService.addToCart(user, product, addProductToCartDto.getQuantity());
+        Product product = productService.getProductById(productId);
+        List<CartItem> cartItems =  userService.addToCart(user, product, quantity);
         log.debug("Number of different items in cart: {}", cartItems.size());
         User updatedUser = userService.getUserById(userId);
 
@@ -167,6 +169,7 @@ public class UserController {
             @Valid
             AddProductToCartDto addProductToCartDto
     ) {
+        Integer quantity = addProductToCartDto.getQuantity();
         User user = userService.getUserById(userId);
 
         if (!productId.equals(addProductToCartDto.getProductId())) {
@@ -175,7 +178,7 @@ public class UserController {
         }
 
         Product product = productService.getProductById(productId);
-        List<CartItem> cartItems =  userService.removeFromCart(user, product, addProductToCartDto.getQuantity());
+        List<CartItem> cartItems =  userService.removeFromCart(user, product, quantity);
         log.debug("Remaining number of different items in cart: {}", cartItems.size());
         User updatedUser = userService.getUserById(userId);
 
