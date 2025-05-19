@@ -7,23 +7,16 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDate;
-
-@Document(collection = "price_entries")
-@Data
+@Document(collection = "price_alerts")
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 @Builder
-public class PriceEntry {
+public class PriceAlert {
     @Id
     private String id;
+    private Double targetPrice;
     private String productId;
-    private double price;
-    private String currency;
-    private String storeName;
-    private LocalDate date;
-    private Double packageQuantity;
-    private String packageUnit;
-    private String valuePerUnitDisplay;
-    private Double valuePerUnit;
+    private String userId;
+    private String message;
 }

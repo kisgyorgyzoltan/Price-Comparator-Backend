@@ -23,6 +23,12 @@ public class PriceEntryService {
         return priceEntryRepository.getPriceHistory(productId, storeName, productCategory, brand);
     }
 
+    public PriceEntry getCheapestPriceEntry(String productId) {
+        Optional<PriceEntry> cheapestPriceEntry = priceEntryRepository.getCheapestLatestPriceEntry(productId);
+        return cheapestPriceEntry.orElseThrow(() -> new NotFoundException("No price entry found for productId: " + productId));
+
+    }
+
     public List<PriceEntry> getPriceEntries(String productId, Boolean orderByValue) {
         Sort sort = (orderByValue != null && orderByValue) ? Sort.by(Sort.Order.desc("valuePerUnit")) : Sort.unsorted();
         if (productId != null && !productId.isEmpty()) {

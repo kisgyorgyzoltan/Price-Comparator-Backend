@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PriceEntryRepository extends MongoRepository<PriceEntry, String> {
@@ -232,4 +233,28 @@ public interface PriceEntryRepository extends MongoRepository<PriceEntry, String
             """
     })
     List<GetPriceHistoryDto> getPriceHistory(String productId, String storeName, String productCategory, String brand);
+
+    @Aggregation(pipeline = {
+            """
+            {
+                "$match": {
+                  "productId": ?0
+                }
+            }
+            """,
+            """
+            {
+                "$sort": {
+                    "date": -1,
+                    "price": 1
+                }
+            }
+            """,
+            """
+            {
+                "$limit": 1
+            }
+            """
+    })
+    Optional<PriceEntry> getCheapestLatestPriceEntry(String productId);
 }
