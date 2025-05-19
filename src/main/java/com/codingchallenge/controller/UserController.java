@@ -4,7 +4,6 @@ import com.codingchallenge.dto.incoming.AddProductToCartDto;
 import com.codingchallenge.dto.incoming.CreateUserDto;
 import com.codingchallenge.dto.outgoing.GetShoppingListDto;
 import com.codingchallenge.dto.outgoing.GetUserDto;
-import com.codingchallenge.mapper.ProductMapper;
 import com.codingchallenge.mapper.ShoppingListMapper;
 import com.codingchallenge.mapper.UserMapper;
 import com.codingchallenge.model.Product;
@@ -42,8 +41,7 @@ public class UserController {
                           UserMapper userMapper,
                           ProductService productService,
                           ShoppingListService shoppingListService,
-                          ShoppingListMapper shoppingListMapper,
-                          ProductMapper productMapper
+                          ShoppingListMapper shoppingListMapper
     ) {
         this.userService = userService;
         this.productService = productService;
