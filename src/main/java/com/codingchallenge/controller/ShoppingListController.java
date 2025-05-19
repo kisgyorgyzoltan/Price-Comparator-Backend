@@ -27,13 +27,9 @@ public class ShoppingListController {
 
     @GetMapping
     public ResponseEntity<List<GetShoppingListDto>> getAllShoppingLists() {
-        try {
-            List<ShoppingList> shoppingLists = shoppingListService.getAllShoppingLists();
-            return ResponseEntity.ok(shoppingListMapper.toGetShoppingListDtos(shoppingLists));
-        } catch (IllegalArgumentException e) {
-            log.error("Failed to fetch shopping lists: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
-        }
+        List<ShoppingList> shoppingLists = shoppingListService.getAllShoppingLists();
+
+        return ResponseEntity.ok(shoppingListMapper.toGetShoppingListDtos(shoppingLists));
     }
 
     @GetMapping("/{id}")
@@ -41,13 +37,9 @@ public class ShoppingListController {
             @PathVariable
             String id
     ) {
-        try {
-            ShoppingList shoppingList = shoppingListService.getShoppingListById(id);
-            return ResponseEntity.ok(shoppingListMapper.toGetShoppingListDto(shoppingList));
-        } catch (IllegalArgumentException e) {
-            log.error("Failed to fetch shopping list with ID {}: {}", id, e.getMessage());
-            return ResponseEntity.badRequest().build();
-        }
+        ShoppingList shoppingList = shoppingListService.getShoppingListById(id);
+
+        return ResponseEntity.ok(shoppingListMapper.toGetShoppingListDto(shoppingList));
     }
 
     @DeleteMapping("/{id}")
@@ -55,12 +47,8 @@ public class ShoppingListController {
             @PathVariable
             String id
     ) {
-        try {
-            shoppingListService.deleteShoppingList(id);
-            return ResponseEntity.noContent().build();
-        } catch (IllegalArgumentException e) {
-            log.error("Failed to delete shopping list with ID {}: {}", id, e.getMessage());
-            return ResponseEntity.badRequest().build();
-        }
+        shoppingListService.deleteShoppingList(id);
+
+        return ResponseEntity.noContent().build();
     }
 }

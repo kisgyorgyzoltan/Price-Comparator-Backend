@@ -1,6 +1,7 @@
 package com.codingchallenge.service;
 
 import com.codingchallenge.dto.internal.BestProductPriceResult;
+import com.codingchallenge.exception.NotFoundException;
 import com.codingchallenge.model.ShoppingList;
 import com.codingchallenge.model.User;
 import com.codingchallenge.model.User.CartItem;
@@ -32,7 +33,7 @@ public class ShoppingListService {
 
     public ShoppingList getShoppingListById(String id) {
         return shoppingListRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Shopping list not found with id: " + id));
+            .orElseThrow(() -> new NotFoundException("ShoppingList not found with id: " + id));
     }
 
     public void deleteShoppingList(String id) {

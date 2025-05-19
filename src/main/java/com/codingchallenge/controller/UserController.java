@@ -55,17 +55,13 @@ public class UserController {
             @RequestBody
             @Valid CreateUserDto userDto
     ) {
-        try {
-            User user = userMapper.toUser(userDto);
-            if (!userService.login(user)) {
-                log.error("Login failed for user: {}", userDto.getName());
-                return ResponseEntity.badRequest().body(false);
-            }
-            return ResponseEntity.ok(true);
-        } catch (IllegalArgumentException e) {
-            log.error("Login failed: {}", e.getMessage());
+        User user = userMapper.toUser(userDto);
+        if (!userService.login(user)) {
+            log.error("Login failed for user: {}", userDto.getName());
             return ResponseEntity.badRequest().body(false);
         }
+
+        return ResponseEntity.ok(true);
     }
 
     @PostMapping("/register")
@@ -74,17 +70,12 @@ public class UserController {
             @Valid
             CreateUserDto userDto
     ) {
-        try {
-            log.warn("Registering user: {}", userDto.toString());
-            User user = userService.register(userDto.getName(), userDto.getPassword());
-            log.warn("User registered: {}", user.toString());
-            log.warn("User mapped to dto: {}", userMapper.toGetUserDto(user).toString());
-            return ResponseEntity.ok(userMapper.toGetUserDto(user));
-        } catch (IllegalArgumentException e) {
-            log.error("Registration failed: {}", e.getMessage());
-            return ResponseEntity.badRequest()
-                    .build();
-        }
+        log.warn("Registering user: {}", userDto.toString());
+        User user = userService.register(userDto.getName(), userDto.getPassword());
+        log.warn("User registered: {}", user.toString());
+        log.warn("User mapped to dto: {}", userMapper.toGetUserDto(user).toString());
+
+        return ResponseEntity.ok(userMapper.toGetUserDto(user));
     }
 
     @GetMapping("/{id}")
@@ -92,14 +83,9 @@ public class UserController {
             @PathVariable
             String id
     ) {
-        try {
-            User user = userService.getUserById(id);
-            return ResponseEntity.ok(userMapper.toGetUserDto(user));
-        } catch (IllegalArgumentException e) {
-            log.error("Get user failed: {}", e.getMessage());
-            return ResponseEntity.badRequest()
-                    .build();
-        }
+        User user = userService.getUserById(id);
+
+        return ResponseEntity.ok(userMapper.toGetUserDto(user));
     }
 
     @PutMapping("/{id}")
@@ -112,28 +98,18 @@ public class UserController {
             @Valid
             CreateUserDto userDto
     ) {
-        try {
-            User incomingUser = userMapper.toUser(userDto);
-            User dbUser = userService.getUserById(id);
-            User user = userService.updateUser(dbUser, oldPassword, incomingUser);
-            return ResponseEntity.ok(userMapper.toGetUserDto(user));
-        } catch (IllegalArgumentException e) {
-            log.error("Update user failed: {}", e.getMessage());
-            return ResponseEntity.badRequest()
-                    .build();
-        }
+        User incomingUser = userMapper.toUser(userDto);
+        User dbUser = userService.getUserById(id);
+        User user = userService.updateUser(dbUser, oldPassword, incomingUser);
+
+        return ResponseEntity.ok(userMapper.toGetUserDto(user));
     }
 
     @GetMapping
     public ResponseEntity<List<GetUserDto>> getAllUsers() {
-        try {
-            List<User> users = userService.getAllUsers();
-            return ResponseEntity.ok(userMapper.toGetUserDtos(users));
-        } catch (IllegalArgumentException e) {
-            log.error("Get all users failed: {}", e.getMessage());
-            return ResponseEntity.badRequest()
-                    .build();
-        }
+        List<User> users = userService.getAllUsers();
+
+        return ResponseEntity.ok(userMapper.toGetUserDtos(users));
     }
 
     @DeleteMapping("/{id}")
@@ -142,16 +118,10 @@ public class UserController {
             @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for id")
             String id
     ) {
-        try {
-            User user = userService.getUserById(id);
-            userService.deleteUser(user);
-            return ResponseEntity.noContent()
-                    .build();
-        } catch (IllegalArgumentException e) {
-            log.error("Delete user failed: {}", e.getMessage());
-            return ResponseEntity.badRequest()
-                    .build();
-        }
+        User user = userService.getUserById(id);
+        userService.deleteUser(user);
+
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}/cart")
@@ -160,16 +130,11 @@ public class UserController {
             @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for id")
             String id
     ) {
-        try {
-            User user = userService.getUserById(id);
-            userService.clearCart(user);
-            User updatedUser = userService.getUserById(id);
-            return ResponseEntity.ok(userMapper.toGetUserDto(updatedUser));
-        } catch (IllegalArgumentException e) {
-            log.error("Clear cart failed: {}", e.getMessage());
-            return ResponseEntity.badRequest()
-                    .build();
-        }
+        User user = userService.getUserById(id);
+        userService.clearCart(user);
+        User updatedUser = userService.getUserById(id);
+
+        return ResponseEntity.ok(userMapper.toGetUserDto(updatedUser));
     }
 
     @PostMapping("/{userId}/cart")
@@ -181,19 +146,13 @@ public class UserController {
             @Valid
             AddProductToCartDto addProductToCartDto
     ) {
-        try {
-            User user = userService.getUserById(userId);
-            Product product = productService.getProductById(addProductToCartDto.getProductId());
-            List<CartItem> cartItems =  userService.addToCart(user, product, addProductToCartDto.getQuantity());
-            log.debug("Number of different items in cart: {}", cartItems.size());
-            User updatedUser = userService.getUserById(userId);
+        User user = userService.getUserById(userId);
+        Product product = productService.getProductById(addProductToCartDto.getProductId());
+        List<CartItem> cartItems =  userService.addToCart(user, product, addProductToCartDto.getQuantity());
+        log.debug("Number of different items in cart: {}", cartItems.size());
+        User updatedUser = userService.getUserById(userId);
 
-            return ResponseEntity.ok(userMapper.toGetUserDto(updatedUser));
-        } catch (IllegalArgumentException e) {
-            log.error("Add to cart failed: {}", e.getMessage());
-            return ResponseEntity.badRequest()
-                    .build();
-        }
+        return ResponseEntity.ok(userMapper.toGetUserDto(updatedUser));
     }
 
     @DeleteMapping("/{userId}/cart/{productId}")
@@ -208,25 +167,19 @@ public class UserController {
             @Valid
             AddProductToCartDto addProductToCartDto
     ) {
-        try {
-            User user = userService.getUserById(userId);
+        User user = userService.getUserById(userId);
 
-            if (!productId.equals(addProductToCartDto.getProductId())) {
-                return ResponseEntity.badRequest()
-                        .build();
-            }
-
-            Product product = productService.getProductById(productId);
-            List<CartItem> cartItems =  userService.removeFromCart(user, product, addProductToCartDto.getQuantity());
-            log.debug("Remaining number of different items in cart: {}", cartItems.size());
-            User updatedUser = userService.getUserById(userId);
-
-            return ResponseEntity.ok(userMapper.toGetUserDto(updatedUser));
-        } catch (IllegalArgumentException e) {
-            log.error("Remove from cart failed: {}", e.getMessage());
+        if (!productId.equals(addProductToCartDto.getProductId())) {
             return ResponseEntity.badRequest()
                     .build();
         }
+
+        Product product = productService.getProductById(productId);
+        List<CartItem> cartItems =  userService.removeFromCart(user, product, addProductToCartDto.getQuantity());
+        log.debug("Remaining number of different items in cart: {}", cartItems.size());
+        User updatedUser = userService.getUserById(userId);
+
+        return ResponseEntity.ok(userMapper.toGetUserDto(updatedUser));
     }
 
     @PostMapping("/{userId}/shopping-list")
@@ -235,17 +188,12 @@ public class UserController {
             @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for id")
             String userId
     ) {
-        try {
-            User user = userService.getUserById(userId);
-            List<CartItem> cart = user.getShoppingCart();
+        User user = userService.getUserById(userId);
+        List<CartItem> cart = user.getShoppingCart();
 
-            ShoppingList shoppingList = shoppingListService.generateBestPrices(userId, cart);
-            return ResponseEntity.ok(shoppingListMapper.toGetShoppingListDto(shoppingList));
+        ShoppingList shoppingList = shoppingListService.generateBestPrices(userId, cart);
 
-        } catch (IllegalArgumentException e) {
-            log.error("Generate shopping list failed: {}", e.getMessage());
-            return ResponseEntity.badRequest().body(null);
-        }
+        return ResponseEntity.ok(shoppingListMapper.toGetShoppingListDto(shoppingList));
     }
 
     @GetMapping("/{userId}/shopping-list")
@@ -254,14 +202,9 @@ public class UserController {
             @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for userId")
             String userId
     ) {
-        try {
-            User user = userService.getUserById(userId);
-            List<ShoppingList> shoppingLists = shoppingListService.getShoppingListsByUserId(user);
-            return ResponseEntity.ok(shoppingListMapper.toGetShoppingListDtos(shoppingLists));
-        } catch (IllegalArgumentException e) {
-            log.error("Get shopping list failed: {}", e.getMessage());
-            return ResponseEntity.badRequest()
-                    .build();
-        }
+        User user = userService.getUserById(userId);
+        List<ShoppingList> shoppingLists = shoppingListService.getShoppingListsByUserId(user);
+
+        return ResponseEntity.ok(shoppingListMapper.toGetShoppingListDtos(shoppingLists));
     }
 }

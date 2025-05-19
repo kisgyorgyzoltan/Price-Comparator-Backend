@@ -1,6 +1,7 @@
 package com.codingchallenge.service;
 
 import com.codingchallenge.dto.outgoing.GetPriceHistoryDto;
+import com.codingchallenge.exception.NotFoundException;
 import com.codingchallenge.model.PriceEntry;
 import com.codingchallenge.repository.PriceEntryRepository;
 import org.springframework.data.domain.Sort;
@@ -32,7 +33,7 @@ public class PriceEntryService {
 
     public PriceEntry getPriceEntryById(String id) {
         return priceEntryRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Price entry not found with id: " + id)); // TODO: Handle this exception properly
+            .orElseThrow(() -> new NotFoundException("PriceEntry not found with id: " + id));
     }
 
     public PriceEntry createPriceEntry(PriceEntry priceEntry) {

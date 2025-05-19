@@ -1,5 +1,9 @@
 package com.codingchallenge.service;
 
+import com.codingchallenge.exception.AlreadyExistsException;
+import com.codingchallenge.exception.IncorrectOldPasswordException;
+import com.codingchallenge.exception.InternalServerErrorException;
+import com.codingchallenge.exception.NotFoundException;
 import com.codingchallenge.model.Product;
 import com.codingchallenge.model.User;
 import com.codingchallenge.model.User.CartItem;
@@ -30,12 +34,12 @@ public class UserService {
 
     public User getUserById(String id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found")); // TODO: handle this exception properly
+            .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
     }
 
     public User register(String name, String password) {
         if (userRepository.findByName(name).isPresent()) {
-            throw new IllegalArgumentException("User already exists"); // TODO: handle this exception properly
+            throw new AlreadyExistsException("User already exists");
         }
         User user = new User();
         user.setName(name);
@@ -45,7 +49,7 @@ public class UserService {
 
     public boolean login(User incomingUser) {
         User dbUser = userRepository.findByName(incomingUser.getName())
-                .orElseThrow(() -> new IllegalArgumentException("User not found")); // TODO: handle this exception properly
+                .orElseThrow(() -> new NotFoundException("User not found"));
         String encryptedPassword = encryptPassword(incomingUser.getPassword(), STORED_SALT);
         return encryptedPassword.equals(dbUser.getPassword());
     }
@@ -53,7 +57,7 @@ public class UserService {
     public User updateUser(User dbUser, String oldPassword, User incomingUser) {
         String oldPasswordHash = encryptPassword(oldPassword, STORED_SALT);
         if (!oldPasswordHash.equals(dbUser.getPassword())) {
-            throw new IllegalArgumentException("Old password is incorrect"); // TODO: handle this exception properly
+            throw new IncorrectOldPasswordException("Old password is incorrect");
         }
 
         dbUser.setName(incomingUser.getName());
@@ -111,9 +115,8 @@ public class UserService {
             }
             return sb.toString();
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e); // TODO: handle this exception properly
+            throw new InternalServerErrorException("Encryption algorithm not found: " + ENCRYPT_ALGORITHM, e);
         }
-
     }
 
     public List<User> getAllUsers() {

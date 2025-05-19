@@ -41,14 +41,9 @@ public class DiscountEntryController {
             @RequestParam(value = "orderByDiscountPercentageDesc", required = false)
             Boolean orderByDiscountPercentageDesc
     ) {
-        try {
-            List<DiscountEntry> discountEntries = discountEntryService.getDiscountEntries(productId, newDiscounts, orderByDiscountPercentageDesc);
-            return ResponseEntity.ok(discountEntryMapper.toGetDiscountEntryDtos(discountEntries));
-        } catch (IllegalArgumentException e) {
-            log.error("Failed to fetch discounts: {}", e.getMessage());
+        List<DiscountEntry> discountEntries = discountEntryService.getDiscountEntries(productId, newDiscounts, orderByDiscountPercentageDesc);
 
-            return ResponseEntity.badRequest().build();
-        }
+        return ResponseEntity.ok(discountEntryMapper.toGetDiscountEntryDtos(discountEntries));
     }
 
     @GetMapping("/{id}")
@@ -57,15 +52,9 @@ public class DiscountEntryController {
             @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for id")
             String id
     ) {
-        try {
-            DiscountEntry discountEntry = discountEntryService.getDiscountEntryById(id);
+        DiscountEntry discountEntry = discountEntryService.getDiscountEntryById(id);
 
-            return ResponseEntity.ok(discountEntryMapper.toGetDiscountEntryDto(discountEntry));
-        } catch (IllegalArgumentException e) {
-            log.error("Failed to fetch discount entry: {}", e.getMessage());
-
-            return ResponseEntity.badRequest().build();
-        }
+        return ResponseEntity.ok(discountEntryMapper.toGetDiscountEntryDto(discountEntry));
     }
 
     @PostMapping
@@ -74,16 +63,10 @@ public class DiscountEntryController {
             @Valid
             CreateDiscountEntryDto discountEntryDto
     ) {
-        try {
-            DiscountEntry discountEntry = discountEntryMapper.toDiscountEntry(discountEntryDto);
-            DiscountEntry createdDiscountEntry = discountEntryService.createDiscountEntry(discountEntry);
+        DiscountEntry discountEntry = discountEntryMapper.toDiscountEntry(discountEntryDto);
+        DiscountEntry createdDiscountEntry = discountEntryService.createDiscountEntry(discountEntry);
 
-            return ResponseEntity.ok(discountEntryMapper.toGetDiscountEntryDto(createdDiscountEntry));
-        } catch (IllegalArgumentException e) {
-            log.error("Failed to create discount entry: {}", e.getMessage());
-
-            return ResponseEntity.badRequest().build();
-        }
+        return ResponseEntity.ok(discountEntryMapper.toGetDiscountEntryDto(createdDiscountEntry));
     }
 
     @PutMapping("/{id}")
@@ -95,17 +78,11 @@ public class DiscountEntryController {
             @Valid
             CreateDiscountEntryDto discountEntryDto
     ) {
-        try {
-            DiscountEntry existingDiscountEntry = discountEntryService.getDiscountEntryById(id);
-            DiscountEntry incomingDiscountEntry = discountEntryMapper.toDiscountEntry(discountEntryDto);
-            DiscountEntry updatedDiscountEntry = discountEntryService.updateDiscountEntry(existingDiscountEntry, incomingDiscountEntry);
+        DiscountEntry existingDiscountEntry = discountEntryService.getDiscountEntryById(id);
+        DiscountEntry incomingDiscountEntry = discountEntryMapper.toDiscountEntry(discountEntryDto);
+        DiscountEntry updatedDiscountEntry = discountEntryService.updateDiscountEntry(existingDiscountEntry, incomingDiscountEntry);
 
-            return ResponseEntity.ok(discountEntryMapper.toGetDiscountEntryDto(updatedDiscountEntry));
-        } catch (IllegalArgumentException e) {
-            log.error("Failed to update discount entry: {}", e.getMessage());
-
-            return ResponseEntity.badRequest().build();
-        }
+        return ResponseEntity.ok(discountEntryMapper.toGetDiscountEntryDto(updatedDiscountEntry));
     }
 
     @DeleteMapping("/{id}")
@@ -114,14 +91,8 @@ public class DiscountEntryController {
             @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for id")
             String id
     ) {
-        try {
-            discountEntryService.deleteDiscountEntry(id);
+        discountEntryService.deleteDiscountEntry(id);
 
-            return ResponseEntity.noContent().build();
-        } catch (IllegalArgumentException e) {
-            log.error("Failed to delete discount entry: {}", e.getMessage());
-
-            return ResponseEntity.badRequest().build();
-        }
+        return ResponseEntity.noContent().build();
     }
 }

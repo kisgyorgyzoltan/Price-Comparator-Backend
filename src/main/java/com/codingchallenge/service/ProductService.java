@@ -1,5 +1,6 @@
 package com.codingchallenge.service;
 
+import com.codingchallenge.exception.NotFoundException;
 import com.codingchallenge.model.Product;
 import com.codingchallenge.repository.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,7 @@ public class ProductService {
 
     public Product getProductById(String id) {
         return productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found")); // TODO: handle this exception properly
+                .orElseThrow(() -> new NotFoundException("Product not found with id: " + id));
     }
 
     public Product createProduct(Product product) {

@@ -1,5 +1,6 @@
 package com.codingchallenge.service;
 
+import com.codingchallenge.exception.NotFoundException;
 import com.codingchallenge.model.DiscountEntry;
 import com.codingchallenge.repository.DiscountEntryRepository;
 import org.springframework.data.domain.Sort;
@@ -55,8 +56,8 @@ public class DiscountEntryService {
     }
 
     public DiscountEntry getDiscountEntryById(String id) {
-        return discountEntryRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("DiscountEntry not found with id: " + id)); // TODO: handle this better
+        return discountEntryRepository.findById(id)
+            .orElseThrow(() -> new NotFoundException("DiscountEntry not found with id: " + id));
     }
 
     public DiscountEntry createDiscountEntry(DiscountEntry discountEntry) {

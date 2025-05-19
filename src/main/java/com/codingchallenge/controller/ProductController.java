@@ -32,13 +32,9 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<List<GetProductDto>> getAllProducts() {
-        try {
-            List<Product> products = productService.getAllProducts();
-            return ResponseEntity.ok(productMapper.toGetProductDtos(products));
-        } catch (IllegalArgumentException e) {
-            log.error("Failed to fetch products: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
-        }
+        List<Product> products = productService.getAllProducts();
+
+        return ResponseEntity.ok(productMapper.toGetProductDtos(products));
     }
 
     @GetMapping("/{productId}")
@@ -47,13 +43,9 @@ public class ProductController {
             @Pattern(regexp = "^[A-Z0-9]{1,20}$", message = "Product ID must be alphanumeric and between 1 and 20 characters.")
             String productId
     ) {
-        try {
-            Product product = productService.getProductById(productId);
-            return ResponseEntity.ok(productMapper.toGetProductDto(product));
-        } catch (IllegalArgumentException e) {
-            log.error("Failed to fetch product with ID {}: {}", productId, e.getMessage());
-            return ResponseEntity.badRequest().build();
-        }
+        Product product = productService.getProductById(productId);
+
+        return ResponseEntity.ok(productMapper.toGetProductDto(product));
     }
 
     @PostMapping
@@ -62,14 +54,10 @@ public class ProductController {
             @Valid
             CreateProductDto createProductDto
     ) {
-        try {
-            Product product = productMapper.toProduct(createProductDto);
-            Product createdProduct = productService.createProduct(product);
-            return ResponseEntity.ok(productMapper.toGetProductDto(createdProduct));
-        } catch (IllegalArgumentException e) {
-            log.error("Failed to create product: {}", e.getMessage());
-            return ResponseEntity.badRequest().build();
-        }
+        Product product = productMapper.toProduct(createProductDto);
+        Product createdProduct = productService.createProduct(product);
+
+        return ResponseEntity.ok(productMapper.toGetProductDto(createdProduct));
     }
 
     @PutMapping("/{productId}")
@@ -81,15 +69,11 @@ public class ProductController {
             @Valid
             CreateProductDto createProductDto
     ) {
-        try {
-            Product incomingProduct = productMapper.toProduct(createProductDto);
-            Product dbProduct = productService.getProductById(productId);
-            Product updatedProduct = productService.updateProduct(dbProduct, incomingProduct);
-            return ResponseEntity.ok(productMapper.toGetProductDto(updatedProduct));
-        } catch (IllegalArgumentException e) {
-            log.error("Failed to update product with ID {}: {}", productId, e.getMessage());
-            return ResponseEntity.badRequest().build();
-        }
+        Product incomingProduct = productMapper.toProduct(createProductDto);
+        Product dbProduct = productService.getProductById(productId);
+        Product updatedProduct = productService.updateProduct(dbProduct, incomingProduct);
+
+        return ResponseEntity.ok(productMapper.toGetProductDto(updatedProduct));
     }
 
     @DeleteMapping("/{productId}")
@@ -98,13 +82,9 @@ public class ProductController {
             @Pattern(regexp = "^[A-Z0-9]{1,20}$", message = "Product ID must be alphanumeric and between 1 and 20 characters.")
             String productId
     ) {
-        try {
-            Product product = productService.getProductById(productId);
-            productService.deleteProduct(product);
-            return ResponseEntity.noContent().build();
-        } catch (IllegalArgumentException e) {
-            log.error("Failed to delete product with ID {}: {}", productId, e.getMessage());
-            return ResponseEntity.badRequest().build();
-        }
+        Product product = productService.getProductById(productId);
+        productService.deleteProduct(product);
+
+        return ResponseEntity.noContent().build();
     }
 }
