@@ -162,18 +162,16 @@ public class UserController {
         return ResponseEntity.ok(userMapper.toGetUserDto(updatedUser));
     }
 
-    @DeleteMapping("/{userId}/cart/{productId}")
+    @DeleteMapping("/{userId}/cart")
     public ResponseEntity<GetUserDto> removeFromCart(
             @PathVariable
             @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for userId")
             String userId,
-            @PathVariable
-            @Pattern(regexp = "^[A-Z0-9]{1,20}$", message = "Product ID must be alphanumeric and between 1 and 20 characters.")
-            String productId,
             @RequestBody
             @Valid
             AddProductToCartDto addProductToCartDto
     ) {
+        String productId = addProductToCartDto.getProductId();
         Integer quantity = addProductToCartDto.getQuantity();
         User user = userService.getUserById(userId);
 
