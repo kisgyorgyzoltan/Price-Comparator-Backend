@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 /*
  * This service is responsible for periodically importing CSV files from a specified directory.
  * It checks if the files have already been processed and imports them if not.
+ * The scheduled task runs every 24 hours.
  */
 @Service
 @Slf4j
