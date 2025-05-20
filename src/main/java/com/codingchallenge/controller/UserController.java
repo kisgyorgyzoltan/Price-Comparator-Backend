@@ -19,7 +19,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -58,7 +60,8 @@ public class UserController {
         User user = userMapper.toUser(userDto);
         if (!userService.login(user)) {
             log.error("Login failed for user: {}", userDto.getName());
-            return ResponseEntity.badRequest().body(false);
+            return ResponseEntity.status(401)
+                    .body(false);
         }
 
         return ResponseEntity.ok(true);
@@ -75,7 +78,9 @@ public class UserController {
         log.warn("User registered: {}", user.toString());
         log.warn("User mapped to dto: {}", userMapper.toGetUserDto(user).toString());
 
-        return ResponseEntity.ok(userMapper.toGetUserDto(user));
+        return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+                                          .buildAndExpand(user.getId()).toUri())
+            .body(userMapper.toGetUserDto(user));
     }
 
     @GetMapping("/{id}")
@@ -196,7 +201,9 @@ public class UserController {
 
         ShoppingList shoppingList = shoppingListService.generateBestPrices(userId, cart);
 
-        return ResponseEntity.ok(shoppingListMapper.toGetShoppingListDto(shoppingList));
+        return ResponseEntity.created(URI.create("/api/shopping-lists/" + shoppingList.getId()))
+                .body(
+            shoppingListMapper.toGetShoppingListDto(shoppingList));
     }
 
     @GetMapping("/{userId}/shopping-list")

@@ -11,7 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -57,7 +59,12 @@ public class ProductController {
         Product product = productMapper.toProduct(createProductDto);
         Product createdProduct = productService.createProduct(product);
 
-        return ResponseEntity.ok(productMapper.toGetProductDto(createdProduct));
+        return ResponseEntity.created(ServletUriComponentsBuilder
+                                          .fromCurrentRequest()
+                                          .path("/{productId}")
+                                          .buildAndExpand(createdProduct.getProductId())
+                                          .toUri())
+                .body(productMapper.toGetProductDto(createdProduct));
     }
 
     @PutMapping("/{productId}")

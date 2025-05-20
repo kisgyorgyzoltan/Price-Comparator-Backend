@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 
@@ -64,7 +65,12 @@ public class PriceEntryController {
         PriceEntry priceEntry = priceEntryMapper.toPriceEntry(createPriceEntryDto);
         PriceEntry createdPriceEntry = priceEntryService.createPriceEntry(priceEntry);
 
-        return ResponseEntity.ok(priceEntryMapper.toGetPriceEntryDto(createdPriceEntry));
+        return ResponseEntity.created(ServletUriComponentsBuilder
+                                          .fromCurrentRequest()
+                                          .path("/{id}")
+                                          .buildAndExpand(createdPriceEntry.getId())
+                                          .toUri())
+            .body(priceEntryMapper.toGetPriceEntryDto(createdPriceEntry));
     }
 
     @PutMapping("/{id}")

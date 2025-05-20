@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 
@@ -56,7 +57,11 @@ public class PriceAlertController {
         PriceAlert priceAlert = priceAlertMapper.toPriceAlert(createPriceAlertDto);
         PriceAlert createdPriceAlert = priceAlertService.createPriceAlert(priceAlert);
 
-        return ResponseEntity.ok(priceAlertMapper.toGetPriceAlertDto(createdPriceAlert));
+        return ResponseEntity.created(ServletUriComponentsBuilder.fromCurrentRequest()
+                                          .path("/{id}")
+                                          .buildAndExpand(createdPriceAlert.getId())
+                                          .toUri())
+            .body(priceAlertMapper.toGetPriceAlertDto(createdPriceAlert));
     }
 
     @PutMapping("/{id}")

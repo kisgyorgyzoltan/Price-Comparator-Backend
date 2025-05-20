@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.constraints.Pattern;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 
@@ -66,7 +67,12 @@ public class DiscountEntryController {
         DiscountEntry discountEntry = discountEntryMapper.toDiscountEntry(discountEntryDto);
         DiscountEntry createdDiscountEntry = discountEntryService.createDiscountEntry(discountEntry);
 
-        return ResponseEntity.ok(discountEntryMapper.toGetDiscountEntryDto(createdDiscountEntry));
+        return ResponseEntity.created(ServletUriComponentsBuilder
+                                          .fromCurrentRequest()
+                                          .path("/{id}")
+                                          .buildAndExpand(createdDiscountEntry.getId())
+                                          .toUri())
+            .body(discountEntryMapper.toGetDiscountEntryDto(createdDiscountEntry));
     }
 
     @PutMapping("/{id}")
