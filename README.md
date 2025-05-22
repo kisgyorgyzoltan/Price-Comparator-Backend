@@ -257,16 +257,19 @@ My source code is organized into packages based on their functionality. The `con
   - Response: 204 No Content or 404 Not Found if price alert not found
 
 ### Get All Discount Entries
+
 - **GET** `/api/discount-entries`
 
   - Response: 200 OK Body: `[{"id": "string", "productId": "string", "percentageOfDiscount": int, "fromDate": date, "toDate": date, "storeName": string, "date": date}]`
 
 ### Get Discount Entry by ID
+
 - **GET** `/api/discount-entries/{id}`
 
   - Response: 200 OK Body: `{"id": "string", "productId": "string", "percentageOfDiscount": int, "fromDate": date, "toDate": date, "storeName": string, "date": date}` or 404 Not Found if discount entry not found
 
 ### Create Discount Entry
+
 - **POST** `/api/discount-entries`
 
   - Request Body: `{"productId": "string", "percentageOfDiscount": int, "fromDate": date, "toDate": date, "storeName": string}`
@@ -274,6 +277,7 @@ My source code is organized into packages based on their functionality. The `con
   - Response: 200 OK Body: `{"id": "string", "productId": "string", "percentageOfDiscount": int, "fromDate": date, "toDate": date, "storeName": string}`
 
 ### Update Discount Entry
+
 - **PUT** `/api/discount-entries/{id}`
 
   - Request Body: `{"productId": "string", "percentageOfDiscount": int, "fromDate": date, "toDate": date, "storeName": string}`
@@ -281,6 +285,7 @@ My source code is organized into packages based on their functionality. The `con
   - Response: 200 OK Body: `{"id": "string", "productId": "string", "percentageOfDiscount": int, "fromDate": date, "toDate": date, "storeName": string}` or 404 Not Found if discount entry not found
 
 ### Delete Discount Entry
+
 - **DELETE** `/api/discount-entries/{id}`
 
   - Response: 204 No Content
@@ -305,3 +310,9 @@ My source code is organized into packages based on their functionality. The `con
 ### Notifications (Adverts)
 
 - The NotificationService is responsible for sending daily notifications to users. The notifications contain the best price for each product in the user's shopping cart. The notifications are sent to the console, but in a production environment, you would typically send them to a messaging system or a notification service.
+
+## Demo
+
+Click the image below to watch the video:
+
+[![Watch the video](https://img.youtube.com/vi/i6p14KRKJX4/1.jpg)](https://www.youtube.com/watch?v=i6p14KRKJX4)
