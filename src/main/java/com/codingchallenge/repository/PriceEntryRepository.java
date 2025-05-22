@@ -206,7 +206,9 @@ public interface PriceEntryRepository extends MongoRepository<PriceEntry, String
                 "$group": {
                   "_id": {
                     "productId": "$productId",
-                    "productName": "$product.productName"
+                    "productName": "$product.productName",
+                    "brand": "$product.brand",
+            		"productCategory": "$product.productCategory"
                   },
                   "priceHistory": {
                     "$push": {
@@ -225,8 +227,8 @@ public interface PriceEntryRepository extends MongoRepository<PriceEntry, String
                   "_id": 0,
                   "productId": "$_id.productId",
                   "productName": "$_id.productName",
-                  "productCategory": "$product.productCategory",
-                  "brand": "$product.brand",
+                  "productCategory": "$_id.productCategory",
+                  "brand": "$_id.brand",
                   "priceHistory": 1
                 }
              }
