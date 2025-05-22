@@ -13,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetShoppingListDto {
+    private String id;
     private String userId;
     private String name;
     private LocalDate createdDate;

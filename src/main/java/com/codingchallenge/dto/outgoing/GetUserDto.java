@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetUserDto {
+    private String id;
     private String name;
     private List<CartItem> shoppingCart;
     private LocalDateTime lastCartUpdate;

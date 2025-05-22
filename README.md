@@ -64,7 +64,7 @@ My source code is organized into packages based on their functionality. The `con
 
   - Request Body: `{"name": "string", "password": "string"}`
 
-  - Response: 200 OK Body: `{"name": "string", "shoppingCart": list, lastCartUpdate: date}`
+  - Response: 200 OK Body: `{"id": "string", "name": "string", "shoppingCart": list, lastCartUpdate: date}`
 
 ### User Login
 
@@ -78,21 +78,21 @@ My source code is organized into packages based on their functionality. The `con
 
 - **GET** `/api/users`
 
-  - Response: 200 OK Body: `[{"name": "string", "shoppingCart": list, lastCartUpdate: date}]`
+  - Response: 200 OK Body: `[{"id": "string", "name": "string", "shoppingCart": list, lastCartUpdate: date}]`
 
 ### Get User by ID
 
 - **GET** `/api/users/{id}`
 
-  - Response: 200 OK Body: `{"name": "string", "shoppingCart": list, lastCartUpdate: date}` or 404 Not Found if user not found
+  - Response: 200 OK Body: `{"id": "string", "name": "string", "shoppingCart": list, lastCartUpdate: date}` or 404 Not Found if user not found
 
 ### Update User
 
 - **PUT** `/api/users/{id}`
 
-  - Request Body: `{"oldPassword": "string", "dto":{"name": "string", "password": "string"}}`
+  - Request Body: `{"name": "string", "oldPassword": "string", "password": "string"}`
 
-  - Response: 200 OK Body: `{"name": "string", "shoppingCart": list, lastCartUpdate: date}` or 404 Not Found if user not found
+  - Response: 200 OK Body: `{"id": "string", "name": "string", "shoppingCart": list, lastCartUpdate: date}` or 404 Not Found if user not found
 
 ### Delete User
 
@@ -105,7 +105,7 @@ My source code is organized into packages based on their functionality. The `con
 
   - Request Body: `{"productId": "string", "quantity": int}`
 
-  - Response: 200 OK Body: `{"name": "string", "shoppingCart": list, lastCartUpdate: date}` or 404 Not Found if user not found
+  - Response: 200 OK Body: `{"id": "string", "name": "string", "shoppingCart": list, lastCartUpdate: date}` or 404 Not Found if user not found
 
 ### Remove Product from Shopping Cart
 
@@ -113,13 +113,13 @@ My source code is organized into packages based on their functionality. The `con
 
   - Request Body: `{"productId": "string", "quantity": int}`
 
-  - Response: 200 OK Body: `{"name": "string", "shoppingCart": list, lastCartUpdate: date}` or 404 Not Found if user not found
+  - Response: 200 OK Body: `{"id": "string", "name": "string", "shoppingCart": list, lastCartUpdate: date}` or 404 Not Found if user not found
 
 ### Clear Shopping Cart
 
 - **DELETE** `/api/users/{userId}/cart`
 
-  - Response: 200 OK Body: `{"name": "string", "shoppingCart": list, lastCartUpdate: date}` or 404 Not Found if user not found
+  - Response: 200 OK Body: `{"id": "string", "name": "string", "shoppingCart": list, lastCartUpdate: date}` or 404 Not Found if user not found
 
 ### Generate Shopping List
 
@@ -134,19 +134,19 @@ My source code is organized into packages based on their functionality. The `con
 
   - Request Body: `{"products": [{"productId": "string", "quantity": int}]}`
 
-  - Response: 200 OK Body: `{"userId": "string", "name": string, "createdDate": date, "products": map}` or 404 Not Found if user not found
+  - Response: 200 OK Body: `{"id": "string", "userId": "string", "name": string, "createdDate": date, "products": map}` or 404 Not Found if user not found
 
 ### Get All Shopping Lists
 
 - **GET** `/api/shopping-lists`
 
-  - Response: 200 OK Body: `[{"userId": "string", "name": string, "createdDate": date, "products": map}]`
+  - Response: 200 OK Body: `[{"id": "string", "userId": "string", "name": string, "createdDate": date, "products": map}]`
 
 ### Get Shopping List by ID
 
 - **GET** `/api/shopping-lists/{id}`
 
-  - Response: 200 OK Body: `{"userId": "string", "name": string, "createdDate": date, "products": map}` or 404 Not Found if shopping list not found
+  - Response: 200 OK Body: `{"id": "string", "userId": "string", "name": string, "createdDate": date, "products": map}` or 404 Not Found if shopping list not found
 
 ### Delete Shopping List
 
@@ -192,13 +192,13 @@ My source code is organized into packages based on their functionality. The `con
 
 - **GET** `/api/price-entries`
 
-  - Response: 200 OK Body: `[{"productId": "string", "price": double, "currency": "string", "storeName": string, "date": date, "packageQuantity": double, "packageUnit": string, "valuePerUnitDisplay": string, "valuePerUnit": double}]`
+  - Response: 200 OK Body: `[{"id": "string", "productId": "string", "price": double, "currency": "string", "storeName": string, "date": date, "packageQuantity": double, "packageUnit": string, "valuePerUnitDisplay": string, "valuePerUnit": double}]`
 
 ### Get Price Entry by ID
 
 - **GET** `/api/price-entries/{id}`
 
-  - Response: 200 OK Body: `{"productId": "string", "price": double, "currency": "string", "storeName": string, "date": date, "packageQuantity": double, "packageUnit": string, "valuePerUnitDisplay": string, "valuePerUnit": double}` or 404 Not Found if price entry not found
+  - Response: 200 OK Body: `{"id": "string", "productId": "string", "price": double, "currency": "string", "storeName": string, "date": date, "packageQuantity": double, "packageUnit": string, "valuePerUnitDisplay": string, "valuePerUnit": double}` or 404 Not Found if price entry not found
 
 ### Create Price Entry
 
@@ -206,7 +206,7 @@ My source code is organized into packages based on their functionality. The `con
 
   - Request Body: `{"productId": "string", "price": double, "currency": "string", "storeName": string, "date": date, "packageQuantity": double, "packageUnit": string}`
 
-  - Response: 200 OK Body: `{"productId": "string", "price": double, "currency": "string", "storeName": string, "date": date, "packageQuantity": double, "packageUnit": string}`
+  - Response: 200 OK Body: `{"id": "string", "productId": "string", "price": double, "currency": "string", "storeName": string, "date": date, "packageQuantity": double, "packageUnit": string}`
 
 ### Update Price Entry
 
@@ -214,7 +214,7 @@ My source code is organized into packages based on their functionality. The `con
 
   - Request Body: `{"productId": "string", "price": double, "currency": "string", "storeName": string, "date": date, "packageQuantity": double, "packageUnit": string}`
 
-  - Response: 200 OK Body: `{"productId": "string", "price": double, "currency": "string", "storeName": string, "date": date, "packageQuantity": double, "packageUnit": string}` or 404 Not Found if price entry not found
+  - Response: 200 OK Body: `{"id": "string", "productId": "string", "price": double, "currency": "string", "storeName": string, "date": date, "packageQuantity": double, "packageUnit": string}` or 404 Not Found if price entry not found
 
 ### Delete Price Entry
 
@@ -226,13 +226,13 @@ My source code is organized into packages based on their functionality. The `con
 
 - **GET** `/api/price-alerts`
 
-  - Response: 200 OK Body: `[{"targetPrice": double, "productId": "string", "userId": "string", "message": string}]`
+  - Response: 200 OK Body: `[{"id": "string", "targetPrice": double, "productId": "string", "userId": "string", "message": string}]`
 
 ### Get Price Alert by ID
 
 - **GET** `/api/price-alerts/{id}`
 
-  - Response: 200 OK Body: `{"targetPrice": double, "productId": "string", "userId": "string", "message": string}` or 404 Not Found if price alert not found
+  - Response: 200 OK Body: `{"id": "string", "targetPrice": double, "productId": "string", "userId": "string", "message": string}` or 404 Not Found if price alert not found
 
 ### Create Price Alert
 
@@ -240,7 +240,7 @@ My source code is organized into packages based on their functionality. The `con
 
   - Request Body: `{"targetPrice": double, "productId": "string", "userId": "string", "message": string}`
 
-  - Response: 200 OK Body: `{"targetPrice": double, "productId": "string", "userId": "string", "message": string}`
+  - Response: 200 OK Body: `{"id": "string", "targetPrice": double, "productId": "string", "userId": "string", "message": string}`
 
 ### Update Price Alert
 
@@ -248,13 +248,42 @@ My source code is organized into packages based on their functionality. The `con
 
   - Request Body: `{"targetPrice": double, "productId": "string", "userId": "string", "message": string}`
 
-  - Response: 200 OK Body: `{"targetPrice": double, "productId": "string", "userId": "string", "message": string}` or 404 Not Found if price alert not found
+  - Response: 200 OK Body: `{"id": "string", "targetPrice": double, "productId": "string", "userId": "string", "message": string}` or 404 Not Found if price alert not found
 
 ### Delete Price Alert
 
 - **DELETE** `/api/price-alerts/{id}`
 
   - Response: 204 No Content or 404 Not Found if price alert not found
+
+### Get All Discount Entries
+- **GET** `/api/discount-entries`
+
+  - Response: 200 OK Body: `[{"id": "string", "productId": "string", "percentageOfDiscount": int, "fromDate": date, "toDate": date, "storeName": string, "date": date}]`
+
+### Get Discount Entry by ID
+- **GET** `/api/discount-entries/{id}`
+
+  - Response: 200 OK Body: `{"id": "string", "productId": "string", "percentageOfDiscount": int, "fromDate": date, "toDate": date, "storeName": string, "date": date}` or 404 Not Found if discount entry not found
+
+### Create Discount Entry
+- **POST** `/api/discount-entries`
+
+  - Request Body: `{"productId": "string", "percentageOfDiscount": int, "fromDate": date, "toDate": date, "storeName": string}`
+
+  - Response: 200 OK Body: `{"id": "string", "productId": "string", "percentageOfDiscount": int, "fromDate": date, "toDate": date, "storeName": string}`
+
+### Update Discount Entry
+- **PUT** `/api/discount-entries/{id}`
+
+  - Request Body: `{"productId": "string", "percentageOfDiscount": int, "fromDate": date, "toDate": date, "storeName": string}`
+
+  - Response: 200 OK Body: `{"id": "string", "productId": "string", "percentageOfDiscount": int, "fromDate": date, "toDate": date, "storeName": string}` or 404 Not Found if discount entry not found
+
+### Delete Discount Entry
+- **DELETE** `/api/discount-entries/{id}`
+
+  - Response: 204 No Content
 
 ## Testing
 

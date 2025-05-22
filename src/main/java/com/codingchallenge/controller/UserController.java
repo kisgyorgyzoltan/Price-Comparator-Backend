@@ -2,6 +2,7 @@ package com.codingchallenge.controller;
 
 import com.codingchallenge.dto.incoming.AddProductToCartDto;
 import com.codingchallenge.dto.incoming.CreateUserDto;
+import com.codingchallenge.dto.incoming.UpdateUserDto;
 import com.codingchallenge.dto.outgoing.GetShoppingListDto;
 import com.codingchallenge.dto.outgoing.GetUserDto;
 import com.codingchallenge.mapper.ShoppingListMapper;
@@ -98,14 +99,11 @@ public class UserController {
             @PathVariable
             String id,
             @RequestBody
-            String oldPassword,
-            @RequestBody
             @Valid
-            CreateUserDto userDto
+            UpdateUserDto updateUserDto
     ) {
-        User incomingUser = userMapper.toUser(userDto);
         User dbUser = userService.getUserById(id);
-        User user = userService.updateUser(dbUser, oldPassword, incomingUser);
+        User user = userService.updateUser(dbUser, updateUserDto);
 
         return ResponseEntity.ok(userMapper.toGetUserDto(user));
     }
@@ -127,19 +125,6 @@ public class UserController {
         userService.deleteUser(user);
 
         return ResponseEntity.noContent().build();
-    }
-
-    @DeleteMapping("/{id}/cart")
-    public ResponseEntity<GetUserDto> clearCart(
-            @PathVariable
-            @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for id")
-            String id
-    ) {
-        User user = userService.getUserById(id);
-        userService.clearCart(user);
-        User updatedUser = userService.getUserById(id);
-
-        return ResponseEntity.ok(userMapper.toGetUserDto(updatedUser));
     }
 
     @PostMapping("/{userId}/cart")
@@ -167,18 +152,21 @@ public class UserController {
             @PathVariable
             @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for userId")
             String userId,
-            @RequestBody
+            @RequestBody(required = false)
             @Valid
             AddProductToCartDto addProductToCartDto
     ) {
-        String productId = addProductToCartDto.getProductId();
-        Integer quantity = addProductToCartDto.getQuantity();
         User user = userService.getUserById(userId);
 
-        if (!productId.equals(addProductToCartDto.getProductId())) {
-            return ResponseEntity.badRequest()
-                    .build();
+        if (addProductToCartDto == null) {
+            userService.clearCart(user);
+            User updatedUser = userService.getUserById(userId);
+
+            return ResponseEntity.ok(userMapper.toGetUserDto(updatedUser));
         }
+
+        String productId = addProductToCartDto.getProductId();
+        Integer quantity = addProductToCartDto.getQuantity();
 
         Product product = productService.getProductById(productId);
         List<CartItem> cartItems =  userService.removeFromCart(user, product, quantity);

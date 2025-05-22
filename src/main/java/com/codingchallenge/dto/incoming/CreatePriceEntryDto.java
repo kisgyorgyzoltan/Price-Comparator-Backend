@@ -27,14 +27,14 @@ public class CreatePriceEntryDto {
     @NotNull(message = "Store name cannot be null")
     private String storeName;
 
-    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "Date must be in the format YYYY-MM-DD.")
     @NotNull(message = "Date cannot be null")
     private LocalDate date;
 
+    @NotNull(message = "Package unit cannot be null")
     @Pattern(regexp = "^[A-Za-z0-9\\s]{1,100}$", message = "Package unit must be alphanumeric and between 1 and 100 characters.")
     private String packageUnit;
 
-    @Pattern(regexp = "^[A-Za-z0-9\\s]{1,100}$", message = "Product type must be alphanumeric and between 1 and 100 characters.")
+    @NotNull(message = "Package quantity cannot be null")
     @Positive(message = "Product type must be a positive number.")
     private double packageQuantity;
 
@@ -42,5 +42,6 @@ public class CreatePriceEntryDto {
     private String valuePerUnitDisplay;
 
     @NotNull(message = "Value per unit cannot be null")
+    @Positive(message = "Value per unit must be a positive number.")
     private Double valuePerUnit;
 }

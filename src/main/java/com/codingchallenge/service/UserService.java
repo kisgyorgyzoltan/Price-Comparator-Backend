@@ -1,13 +1,14 @@
 package com.codingchallenge.service;
 
+import com.codingchallenge.dto.incoming.UpdateUserDto;
 import com.codingchallenge.exception.AlreadyExistsException;
-import com.codingchallenge.exception.IncorrectOldPasswordException;
 import com.codingchallenge.exception.InternalServerErrorException;
 import com.codingchallenge.exception.NotFoundException;
 import com.codingchallenge.model.Product;
 import com.codingchallenge.model.User;
 import com.codingchallenge.model.User.CartItem;
 import com.codingchallenge.repository.UserRepository;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import org.springframework.stereotype.Service;
@@ -52,17 +53,6 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("User not found"));
         String encryptedPassword = encryptPassword(incomingUser.getPassword(), STORED_SALT);
         return encryptedPassword.equals(dbUser.getPassword());
-    }
-
-    public User updateUser(User dbUser, String oldPassword, User incomingUser) {
-        String oldPasswordHash = encryptPassword(oldPassword, STORED_SALT);
-        if (!oldPasswordHash.equals(dbUser.getPassword())) {
-            throw new IncorrectOldPasswordException("Old password is incorrect");
-        }
-
-        dbUser.setName(incomingUser.getName());
-        dbUser.setPassword(encryptPassword(incomingUser.getPassword(), STORED_SALT));
-        return userRepository.save(dbUser);
     }
 
     public void deleteUser(User user) {
@@ -142,5 +132,13 @@ public class UserService {
         user.setLastCartUpdate(LocalDateTime.now());
         userRepository.save(user);
         return user.getShoppingCart();
+    }
+
+    public User updateUser(User dbUser, @Valid UpdateUserDto updateUserDto) {
+        dbUser.setName(updateUserDto.getName());
+        dbUser.setPassword(encryptPassword(updateUserDto.getPassword(), STORED_SALT));
+        dbUser.setShoppingCart(dbUser.getShoppingCart());
+        dbUser.setLastCartUpdate(dbUser.getLastCartUpdate());
+        return userRepository.save(dbUser);
     }
 }

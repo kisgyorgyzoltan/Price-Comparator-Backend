@@ -2,6 +2,7 @@ package com.codingchallenge.dto.incoming;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -9,19 +10,17 @@ import java.time.LocalDate;
 @Data
 public class CreateDiscountEntryDto {
     @NotNull(message = "Product ID cannot be null")
-    @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Product ID must be a valid MongoDB ObjectId.")
+    @Pattern(regexp = "^[A-Z0-9]{1,20}$", message = "Product ID must be alphanumeric and between 1 and 20 characters.")
     private String productId;
 
     @NotNull(message = "From date cannot be null")
-    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "From date must be in the format YYYY-MM-DD.")
     private LocalDate fromDate;
 
     @NotNull(message = "To date cannot be null")
-    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "To date must be in the format YYYY-MM-DD.")
     private LocalDate toDate;
 
     @NotNull(message = "Percentage of discount cannot be null")
-    @Pattern(regexp = "^(100|[1-9][0-9]?)$", message = "Percentage of discount must be between 0 and 100.")
+    @PositiveOrZero(message = "Percentage of discount must be a positive number or zero.")
     private int percentageOfDiscount;
 
     @NotNull(message = "Store name cannot be null")
@@ -29,6 +28,5 @@ public class CreateDiscountEntryDto {
     private String storeName;
 
     @NotNull(message = "Date cannot be null")
-    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "Date must be in the format YYYY-MM-DD.")
     private LocalDate date;
 }

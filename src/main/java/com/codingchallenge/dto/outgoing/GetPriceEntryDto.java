@@ -6,6 +6,7 @@ import java.time.LocalDate;
 
 @Data
 public class GetPriceEntryDto {
+    private String id;
     private String productId;
     private double price;
     private String currency;

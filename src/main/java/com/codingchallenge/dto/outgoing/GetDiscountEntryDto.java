@@ -6,6 +6,7 @@ import java.time.LocalDate;
 
 @Data
 public class GetDiscountEntryDto {
+    private String id;
     private String productId;
     private LocalDate fromDate;
     private LocalDate toDate;

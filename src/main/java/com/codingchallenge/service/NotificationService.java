@@ -49,7 +49,7 @@ public class NotificationService {
             );
             notificationRepository.save(notification);
             // Mocking sending notification
-            log.debug("Notifying user: {}", user.getName());
+            log.info("Notifying user: {}", user.getName());
 
             // Update the notification status to notified
             notification.setNotified(true);
@@ -66,7 +66,7 @@ public class NotificationService {
         List<Notification> unsentNotifications = notificationRepository.findAllByNotified(false);
         for (Notification notification : unsentNotifications) {
             // Mocking sending notification
-            log.debug("Sending notification to user: {}", notification.getUserId());
+            log.info("Sending notification to user: {}", notification.getUserId());
             notification.setNotified(true);
             notificationRepository.save(notification);
         }
