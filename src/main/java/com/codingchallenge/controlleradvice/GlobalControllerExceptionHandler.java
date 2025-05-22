@@ -3,11 +3,15 @@ package com.codingchallenge.controlleradvice;
 import com.codingchallenge.exception.*;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 @RestControllerAdvice
@@ -21,9 +25,20 @@ public class GlobalControllerExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public final Stream<String> handleMethodArgumentNotValid(MethodArgumentNotValidException e) {
-        return e.getBindingResult().getFieldErrors().stream()
-            .map(it -> it.getField() + " " + it.getDefaultMessage());
+    public final ResponseEntity<?> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+
+        // Field-level errors
+        ex.getBindingResult().getFieldErrors().forEach(error -> {
+            errors.put(error.getField(), error.getDefaultMessage());
+        });
+
+        // Object-level (class-level) errors
+        ex.getBindingResult().getGlobalErrors().forEach(error -> {
+            errors.put(error.getObjectName(), error.getDefaultMessage());
+        });
+
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(NotFoundException.class)

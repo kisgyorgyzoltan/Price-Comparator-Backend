@@ -16,7 +16,7 @@ public class CreatePriceAlertDto {
     private String productId;
 
     @NotNull(message = "User ID cannot be null")
-    @Pattern(regexp = "^[a-zA-Z0-9]{3,20}$", message = "Name must be alphanumeric and between 3 and 20 characters long")
+    @Pattern(regexp = "^[a-fA-F0-9]{24}$", message = "Invalid ObjectId format for userId")
     private String userId;
 
     @NotNull(message = "Message cannot be null")
